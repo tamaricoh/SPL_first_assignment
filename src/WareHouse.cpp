@@ -17,7 +17,10 @@ isOpen(false), customerCounter(0), volunteerCounter(0)
     // completedOrders(new vector<Order*>);
     // customers(new vector<Customer*>);
 
-    // Parse - 
+    parse(configFilePath);
+}
+
+void WareHouse :: parse (const string &configFilePath){
 
     ifstream file(configFilePath); // Open the file
 
@@ -112,5 +115,5 @@ const vector<BaseAction*> & WareHouse :: getActionsLog() const{
 
 void WareHouse :: addOrder(Order* order){
     // verify the status!!!
-    
+
 }
