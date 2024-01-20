@@ -58,7 +58,6 @@ void WareHouse :: parse (const string &configFilePath){
                 }
                 if (type == "soldier"){
                     customers.push_back(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
-                    // call constructor and insert to the customer vector
                 }
                 cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << orderLimit << endl;
             }

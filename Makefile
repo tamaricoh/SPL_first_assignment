@@ -7,6 +7,9 @@ main.o :
 customer.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Customer.o src/Customer.cpp 
 
+volunteer.o :
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Volunteer.o src/Volunteer.cpp
+
 link : 
 	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o
 
