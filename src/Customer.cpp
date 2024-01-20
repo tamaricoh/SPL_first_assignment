@@ -1,9 +1,8 @@
 #include "../include/Customer.h"
 #include "../include/WareHouse.h"
 
-Customer :: Customer(int id, const string &name, int locationDistance, int maxOrders) : id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders){
-    // when calling this constructor, the output will ve inserted to the costumer vactor
-}
+Customer :: Customer(int id, const string &name, int locationDistance, int maxOrders) :
+id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId(){}
 
 const string& Customer :: getName() const{
     return name;
@@ -29,8 +28,8 @@ bool Customer :: canMakeOrder() const{
     return (getNumOrders() < getMaxOrders());
 }
 
-vector<int>& Customer :: getOrders() const{
-    // To be continued
+const vector<int>& Customer :: getOrders() const{
+    return ordersId;
 }
 
 int Customer :: addOrder(int orderId){
@@ -42,5 +41,16 @@ int Customer :: addOrder(int orderId){
     }
 }
 
-SoldierCustomer :: SoldierCustomer(int id, string name, int locationDistance, int maxOrders): Customer(id, name, locationDistance, maxOrders){}
-CivilianCustomer :: CivilianCustomer(int id, string name, int locationDistance, int maxOrders): Customer(id, name, locationDistance, maxOrders){}
+SoldierCustomer :: SoldierCustomer(int id, string name, int locationDistance, int maxOrders):
+Customer(id, name, locationDistance, maxOrders){}
+
+SoldierCustomer* SoldierCustomer :: clone() const{
+    return new SoldierCustomer(*this);
+}
+
+CivilianCustomer :: CivilianCustomer(int id, string name, int locationDistance, int maxOrders): 
+Customer(id, name, locationDistance, maxOrders){}
+
+CivilianCustomer* CivilianCustomer :: clone() const{
+    return new CivilianCustomer(*this);
+}

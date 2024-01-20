@@ -4,19 +4,15 @@
 
 #include "../include/WareHouse.h"
 #include "../include/Volunteer.h"
+#include "../include/Customer.h"
 
 using namespace std;
 
 WareHouse :: WareHouse(const string &configFilePath):
-isOpen(false), customerCounter(0), volunteerCounter(0)
+isOpen(false),
+actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
+customerCounter(0), volunteerCounter(0), orderCounter(0)
 {
-    // actionsLog(new vector<BaseAction*>);
-    // volunteers(new vector<Volunteer*>);
-    // pendingOrders(new vector<Order*>);
-    // inProcessOrders(new vector<Order*>);
-    // completedOrders(new vector<Order*>);
-    // customers(new vector<Customer*>);
-
     parse(configFilePath);
 }
 
@@ -58,9 +54,10 @@ void WareHouse :: parse (const string &configFilePath){
 
                 // Call the constructor
                 if (type == "civilian"){
-                    // call constructor and insert to the customer vector
+                    customers.push_back(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
                 }
                 if (type == "soldier"){
+                    customers.push_back(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
                     // call constructor and insert to the customer vector
                 }
                 cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << orderLimit << endl;
