@@ -12,7 +12,7 @@ int main(int argc, char** argv){
     }
     string configurationFile = argv[1];
     WareHouse wareHouse(configurationFile); // So parse happens in a the WareHouse builder
-    // wareHouse.start();
+    wareHouse.start();
     if(backup!=nullptr){
     	delete backup;
     	backup = nullptr;
