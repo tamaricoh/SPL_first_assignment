@@ -7,7 +7,17 @@
 
 using namespace std;
 
-WareHouse :: WareHouse(const string &configFilePath){
+WareHouse :: WareHouse(const string &configFilePath):
+isOpen(false), customerCounter(0), volunteerCounter(0)
+{
+    // actionsLog(new vector<BaseAction*>);
+    // volunteers(new vector<Volunteer*>);
+    // pendingOrders(new vector<Order*>);
+    // inProcessOrders(new vector<Order*>);
+    // completedOrders(new vector<Order*>);
+    // customers(new vector<Customer*>);
+
+    // Parse - 
 
     ifstream file(configFilePath); // Open the file
 
@@ -44,8 +54,12 @@ WareHouse :: WareHouse(const string &configFilePath){
                 id = customers.size();
 
                 // Call the constructor
-                if (type == "civilian"){}
-                if (type == "soldier"){}
+                if (type == "civilian"){
+                    // call constructor and insert to the customer vector
+                }
+                if (type == "soldier"){
+                    // call constructor and insert to the customer vector
+                }
                 cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << orderLimit << endl;
             }
             
@@ -80,4 +94,23 @@ WareHouse :: WareHouse(const string &configFilePath){
             }
         } 
     }
-};
+}
+
+void WareHouse :: start(){
+    if (!isOpen) {
+        isOpen = true;
+        cout << "Warehouse is open!" << endl;
+        // the program waits for the user to enter an action to execute
+    } else {
+        cout << "The Warehouse is already open." << endl;
+    }
+}
+
+const vector<BaseAction*> & WareHouse :: getActionsLog() const{
+    return actionsLog;
+}
+
+void WareHouse :: addOrder(Order* order){
+    // verify the status!!!
+    
+}
