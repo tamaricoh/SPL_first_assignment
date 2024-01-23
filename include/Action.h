@@ -14,8 +14,6 @@ enum class CustomerType{
 };
 
 
-class Customer;
-
 class BaseAction{
     public:
         BaseAction();
@@ -46,12 +44,12 @@ class SimulateStep : public BaseAction {
         const int numOfSteps;
 };
 
-class Order : public BaseAction {
+class AddOrder : public BaseAction {
     public:
-        Order(int id);
+        AddOrder(int id);
         void act(WareHouse &wareHouse) override;
-        Order *clone() const override;
         string toString() const override;
+        AddOrder *clone() const override;
     private:
         const int customerId;
 };
@@ -59,7 +57,7 @@ class Order : public BaseAction {
 
 class AddCustomer : public BaseAction {
     public:
-        AddCustomer(string customerName, string customerType, int distance, int maxOrders);
+        AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders);
         void act(WareHouse &wareHouse) override;
         AddCustomer *clone() const override;
         string toString() const override;
@@ -100,7 +98,7 @@ class PrintVolunteerStatus : public BaseAction {
         PrintVolunteerStatus *clone() const override;
         string toString() const override;
     private:
-        const int VolunteerId;
+        const int volunteerId;
 };
 
 
@@ -117,6 +115,7 @@ class Close : public BaseAction {
     public:
         Close();
         void act(WareHouse &wareHouse) override;
+        Close *clone() const override;
         string toString() const override;
     private:
 };

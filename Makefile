@@ -11,10 +11,10 @@ volunteer.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Volunteer.o src/Volunteer.cpp
 
 link : 
-	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o
+	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o
 
 run : 
 	./bin/main configFileExample.txt
 
 tamar : 
-	echo f
+	echo Tamar the queen 

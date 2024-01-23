@@ -23,74 +23,63 @@ void WareHouse :: parse (const string &configFilePath){
     // Check if the file opened successfully
     if (file.is_open()) {
 
-        // Read the contents of the file, word by word in eace line 
-        string line; 
+        string line;
+        string firstWord;
+        string name;
+        string orderLimit;
+        string type; // or role
+        string dist;
+        string distPerStep;
+        string temp; // Becaue orderLimit is optional in volunteers
+        int id;
+
         while (getline(file, line)) { 
 
             // Skip lines that beggin with '#'
-            if (line.size() > 0 && line[0] == '#') {
+            if ((line.size() == 0) | ( line.size() > 0 && line[0] == '#')) {
                 continue; 
             }
 
             istringstream iss(line);
-
-            string firstWord;
-            string name;
-            string orderLimit;
-            int id;
-
-            iss >> firstWord >> name;
+            iss >> firstWord >> name >> type >> dist;
 
             // for costumers
-            if (firstWord == "customer"){
-
-                // Get all info from line    
-                string type;
-                string dist;
-
-                iss >> type >> dist >> orderLimit;
-
+            if (type == "civilian"){
+                iss >> orderLimit;
                 id = customers.size();
-
-                // Call the constructor
-                if (type == "civilian"){
-                    customers.push_back(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
-                }
-                if (type == "soldier"){
-                    customers.push_back(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
-                }
-                cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << orderLimit << endl;
+                customers.push_back(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
             }
+            if (type == "soldier"){
+                iss >> orderLimit;
+                id = customers.size();
+                customers.push_back(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
+            }
+
             
             // for volunteers
-            if (firstWord == "volunteer"){
-                
-                // Get all info from line
-                string role;
-                string cdORmd;
-                string distPerStep;
-                string temp;
-
-                iss >> role >> cdORmd;
-
-                id = volunteers.size();
-
-                if (role.find("driver") != std::string::npos){
-                    iss >> distPerStep;
-                }
-
-                if(iss >> temp && temp != "#"){
-                    orderLimit = temp;
-                } 
-
-                // Call the constructor
-                if (role == "collector"){}
-                if (role == "limited_collector"){}
-                if (role == "driver"){}
-                if (role == "limited_driver"){}
-
-                cout << id << " " << firstWord << " " << name << " " << role << " " << cdORmd << " " << distPerStep << " " << orderLimit << endl;
+            if (type.find("driver") != std::string::npos){
+                iss >> distPerStep;
             }
+
+            if(iss >> temp && temp != "#"){
+                orderLimit = temp;
+            } 
+
+            if (type == "collector"){
+                id = volunteers.size();
+            }
+            if (type == "limited_collector"){
+                id = volunteers.size();
+            }
+            if (type == "driver"){
+                id = volunteers.size();
+            }
+            if (type == "limited_driver"){
+                id = volunteers.size();
+            }
+
+            cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << distPerStep << " " << orderLimit << endl;
+            
         } 
     }
 }
@@ -105,7 +94,7 @@ void WareHouse :: start(){
     }
 }
 
-const vector<BaseAction*> & WareHouse :: getActionsLog() const{
+const vector<BaseAction*> & WareHouse :: getActions() const{
     return actionsLog;
 }
 

@@ -21,23 +21,18 @@ int Volunteer::getCompletedOrderId() const{
     return completedOrderId;
 }
 
-bool Volunteer::isBusy() const{}
-
-bool Volunteer::hasOrdersLeft() const{}
-
-void Volunteer::acceptOrder(const Order &order){}
-
-void Volunteer::step(){}
-
+bool Volunteer::isBusy() const{
+    //return(activeOrderId != completedOrderId);
+}
 
 
 //CollectorVolunteer
 
-CollectorVolunteer::CollectorVolunteer(int id, string name, int coolDown) :
+CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
 Volunteer(id, name), coolDown(coolDown), timeLeft(0){}
 
 CollectorVolunteer* CollectorVolunteer:: clone() const{
-    // to complete
+    return new CollectorVolunteer(*this);
 }
 
 void CollectorVolunteer::step() {
@@ -54,8 +49,7 @@ int CollectorVolunteer::getTimeLeft() const{
 
 bool CollectorVolunteer::decreaseCoolDown(){
     timeLeft--;
-    return timeLeft == 0;
-    //Decrease timeLeft by 1,return true if timeLeft=0,false otherwise
+    return (timeLeft == 0);
 }
 
 bool CollectorVolunteer::hasOrdersLeft() const {}
@@ -69,7 +63,7 @@ string CollectorVolunteer::toString() const {}
 
 //LimitedCollectorVolunteer
 
-LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, string name, int coolDown ,int maxOrders) :
+LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, const string& name, int coolDown ,int maxOrders) :
 CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){}
 
 LimitedCollectorVolunteer* LimitedCollectorVolunteer:: clone() const {}
@@ -95,7 +89,7 @@ string LimitedCollectorVolunteer:: toString() const {}
 
 //DriverVolunteer
 
-DriverVolunteer:: DriverVolunteer(int id, string name, int maxDistance, int distancePerStep) :
+DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
 Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){}
 
 DriverVolunteer* DriverVolunteer:: clone() const{}
