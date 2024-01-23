@@ -5,6 +5,8 @@
 #include "../include/WareHouse.h"
 #include "../include/Volunteer.h"
 #include "../include/Customer.h"
+#include "../include/Order.h"
+#include "../include/Action.h"
 
 using namespace std;
 
