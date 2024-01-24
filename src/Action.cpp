@@ -32,12 +32,18 @@ void SimulateStep :: act(WareHouse &wareHouse){
     //===============================================
 }
 
-std:: string SimulateStep:: toString() const{
-    //===============================================
-}
-
 SimulateStep* SimulateStep:: clone() const{
     return new SimulateStep(*this);
+}
+
+std:: string SimulateStep:: toString() const{
+    // <action_1_name> <action_1_args> <action_1_status>
+    string output = "SimulateStep " + std::to_string(numOfSteps) + " ";
+
+    if (getStatus() == ActionStatus::COMPLETED){
+        return output + "Completed";
+    }
+    return output + "Error: " + getErrorMsg();
 }
 
 
