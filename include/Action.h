@@ -58,6 +58,8 @@ class AddOrder : public BaseAction {
 class AddCustomer : public BaseAction {
     public:
         AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders);
+        CustomerType CustomerTypeToEnum(const string& type) const;
+        string EnumToCustomerType(CustomerType type) const; 
         void act(WareHouse &wareHouse) override;
         AddCustomer *clone() const override;
         string toString() const override;
