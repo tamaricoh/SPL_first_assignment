@@ -25,6 +25,8 @@ class WareHouse {
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
+        int getOrderCount() const;
+        int getCustomerCount() const;
 
     private:
         bool isOpen;

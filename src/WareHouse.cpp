@@ -104,3 +104,11 @@ void WareHouse :: addOrder(Order* order){
     // verify the status!!!
 
 }
+
+int WareHouse:: getOrderCount() const{
+    return orderCounter;
+}
+
+int WareHouse:: getCustomerCount() const{
+    return customerCounter;
+}
