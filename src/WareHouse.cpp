@@ -69,19 +69,21 @@ void WareHouse :: parse (const string &configFilePath){
 
             if (type == "collector"){
                 id = volunteers.size();
+                volunteers.push_back(new CollectorVolunteer(id, name, stoi(dist)));
             }
             if (type == "limited_collector"){
                 id = volunteers.size();
+                volunteers.push_back(new LimitedCollectorVolunteer(id, name, stoi(dist), stoi(orderLimit)));
+
             }
             if (type == "driver"){
                 id = volunteers.size();
+                volunteers.push_back(new DriverVolunteer(id, name, stoi(dist), stoi(distPerStep)));
             }
             if (type == "limited_driver"){
                 id = volunteers.size();
-            }
-
-            cout << id << " " << firstWord << " " << name << " " << type << " " << dist << " " << distPerStep << " " << orderLimit << endl;
-            
+                volunteers.push_back(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
+            }   
         } 
     }
 }
@@ -96,14 +98,56 @@ void WareHouse :: start(){
     }
 }
 
-const vector<BaseAction*> & WareHouse :: getActions() const{
+void WareHouse:: addOrder(Order* order){}
+
+void WareHouse:: addAction(BaseAction* action){}
+
+Customer& WareHouse:: getCustomer(int customerId) const{
+    for (const auto& customer : customers) {
+        if (customer->getId() == customerId) {
+            return *customer;
+        }
+    }
+    // what happend if theres no customer??????
+}
+
+Volunteer& WareHouse:: getVolunteer(int volunteerId) const{
+    for (const auto& volunteer : volunteers) {
+        if (volunteer->getId() == volunteerId) {
+            return *volunteer;
+        }
+    }
+    // what happend if theres no volunteer??????
+}
+
+Order& WareHouse:: getOrder(int orderId) const{
+    for (const auto& order : pendingOrders) {
+        if (order->getId() == orderId) {
+            return *order;
+        }
+    }
+
+    for (const auto& order : inProcessOrders) {
+        if (order->getId() == orderId) {
+            return *order;
+        }
+    }
+
+    for (const auto& order : completedOrders) {
+        if (order->getId() == orderId) {
+            return *order;
+        }
+    }
+    // what happend if theres no volunteer??????
+}
+
+const vector<BaseAction*>& WareHouse:: getActions() const{
     return actionsLog;
 }
 
-void WareHouse :: addOrder(Order* order){
-    // verify the status!!!
+void WareHouse:: close(){}
 
-}
+void WareHouse:: open(){}
 
 int WareHouse:: getOrderCount() const{
     return orderCounter;

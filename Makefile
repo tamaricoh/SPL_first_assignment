@@ -13,8 +13,11 @@ volunteer.o :
 order.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Order.o src/Order.cpp
 
+action.o :
+	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
+
 link : 
-	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o
+	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
 
 run : 
 	./bin/main configFileExample.txt
