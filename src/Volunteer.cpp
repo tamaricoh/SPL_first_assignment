@@ -166,7 +166,6 @@ void DriverVolunteer:: step() {
 string DriverVolunteer:: toString() const {
     // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <distanceLeft> <maxDistance>
     return std::to_string(getId()) + " " +
-        getName()+ " " +
         std::to_string(isBusy()) + " " +
         std::to_string(getActiveOrderId()) + " " +
         std::to_string(getDistanceLeft()) + " " +

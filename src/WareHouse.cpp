@@ -13,7 +13,8 @@ using namespace std;
 WareHouse :: WareHouse(const string &configFilePath):
 isOpen(false),
 actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
-customerCounter(0), volunteerCounter(0), orderCounter(0)
+customerCounter(0), volunteerCounter(0), orderCounter(0), 
+noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0))
 {
     parse(configFilePath);
 }
@@ -98,26 +99,35 @@ void WareHouse :: start(){
     }
 }
 
-void WareHouse:: addOrder(Order* order){}
+void WareHouse:: addOrder(Order* order){
+    // order added to pendingOrders because this func handles only new orders.
+    pendingOrders.push_back(order);
+    orderCounter++;
+}
+
+void WareHouse:: addCustomer(Customer* Customer){
+    customers.push_back(Customer);
+    customerCounter++;
+}
 
 void WareHouse:: addAction(BaseAction* action){}
 
 Customer& WareHouse:: getCustomer(int customerId) const{
-    for (const auto& customer : customers) {
+    for (Customer* customer : customers) {
         if (customer->getId() == customerId) {
             return *customer;
         }
     }
-    // what happend if theres no customer??????
+    return *noCustomer;
 }
 
 Volunteer& WareHouse:: getVolunteer(int volunteerId) const{
-    for (const auto& volunteer : volunteers) {
+    for (Volunteer* volunteer : volunteers) {
         if (volunteer->getId() == volunteerId) {
             return *volunteer;
         }
     }
-    // what happend if theres no volunteer??????
+    return *noVolunteer;
 }
 
 Order& WareHouse:: getOrder(int orderId) const{
@@ -138,7 +148,7 @@ Order& WareHouse:: getOrder(int orderId) const{
             return *order;
         }
     }
-    // what happend if theres no volunteer??????
+    return *noOrder;
 }
 
 const vector<BaseAction*>& WareHouse:: getActions() const{
@@ -156,3 +166,5 @@ int WareHouse:: getOrderCount() const{
 int WareHouse:: getCustomerCount() const{
     return customerCounter;
 }
+
+const vector<Order*> WareHouse:: getCustomerOrders(int customerId) const{}

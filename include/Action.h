@@ -1,9 +1,13 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
+#include <sstream>
 #include "WareHouse.h"
 using std::string;
 using std::vector;
+using namespace std;
+
 
 enum class ActionStatus{
     COMPLETED, ERROR

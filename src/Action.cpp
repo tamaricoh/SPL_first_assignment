@@ -2,6 +2,7 @@
 #include "../include/WareHouse.h"
 #include "../include/Order.h"
 #include "../include/Customer.h"
+#include "../include/Volunteer.h"
 
 BaseAction:: BaseAction(){}
 
@@ -16,6 +17,7 @@ void BaseAction:: complete(){
 void BaseAction:: error(string errorMsg){
     status = ActionStatus::ERROR;
     this -> errorMsg = errorMsg;
+    cout << "Error: " << errorMsg << endl;
     
 }
 
@@ -38,7 +40,7 @@ SimulateStep* SimulateStep:: clone() const{
 
 std:: string SimulateStep:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "SimulateStep " + std::to_string(numOfSteps) + " ";
+    string output = "SimulateStep " + std::to_string(numOfSteps)+ " " ;
 
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "Completed";
@@ -66,6 +68,7 @@ void AddOrder:: act(WareHouse &wareHouse){
     Order* newOrder = new Order(OrderId, customerId, distance);
     newOrder->setStatus(OrderStatus::PENDING);
     wareHouse.addOrder(newOrder);
+    complete();
 }
 
 AddOrder* AddOrder:: clone() const{
@@ -74,7 +77,7 @@ AddOrder* AddOrder:: clone() const{
 
 string AddOrder:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "AddOrder " + std::to_string(customerId) + " ";
+    string output = "AddOrder " + std::to_string(customerId)+ " ";
 
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "Completed";
@@ -106,7 +109,6 @@ string AddCustomer:: EnumToCustomerType(CustomerType type) const {
     }
 }
 
-//int id, const string &name, int locationDistance, int maxOrders
 void AddCustomer:: act(WareHouse &wareHouse){
     int customerId = wareHouse.getCustomerCount();
     Customer* newCustomer;
@@ -116,6 +118,8 @@ void AddCustomer:: act(WareHouse &wareHouse){
     if (customerType == CustomerType::Civilian){
             newCustomer = new CivilianCustomer(customerId, customerName, distance, maxOrders);
     }
+    wareHouse.addCustomer(newCustomer);
+    complete();
 }
 
 AddCustomer* AddCustomer:: clone() const{
@@ -127,7 +131,7 @@ string AddCustomer:: toString() const{
     string output = "AddCustomer " +
     customerName + " " + EnumToCustomerType(customerType) + " " +
     std::to_string(distance) + " " +
-    std::to_string(maxOrders);
+    std::to_string(maxOrders)+ " ";
 
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "Completed";
@@ -141,7 +145,28 @@ string AddCustomer:: toString() const{
 PrintOrderStatus:: PrintOrderStatus(int id) : orderId(id){}
 
 void PrintOrderStatus:: act(WareHouse& wareHouse){
-    //===============================================
+    Order& order = wareHouse.getOrder(orderId);
+    if (order.getId() == -1){
+        error("Order does not exist");
+        return;
+    }
+    stringstream ss(order.toString());
+    string word;
+    vector<string> labels = {
+        "OrderId: ",
+        "OrderStatus: ",
+        "CustomerID: ",
+        "Collector: ",
+        "Driver: "
+    };
+
+    for (string label : labels) {
+        ss >> word;
+        if (word == "-1"){
+            word = "None";
+        }
+        cout << label << word << endl;
+    }
 }
 
 PrintOrderStatus* PrintOrderStatus:: clone() const{
@@ -187,7 +212,34 @@ string PrintCustomerStatus:: toString() const{
 PrintVolunteerStatus:: PrintVolunteerStatus(int id) : volunteerId(id){}
 
 void PrintVolunteerStatus:: act(WareHouse& wareHouse){
-    //===============================================
+    Volunteer& volunteer = wareHouse.getVolunteer(volunteerId);
+    if (volunteer.getId() == -1){
+        error("Order does not exist");
+        return;
+    }
+    stringstream ss(volunteer.toString());
+    string word;
+    string helper;
+    
+    ss >> word;
+    cout << "VolunteerID: " << word << endl;
+    ss >> word;
+    cout << "isBusy: " << word << endl;
+    helper = word;
+    ss >> word;
+    if (helper == "False"){
+        word = "None";
+    }
+    cout << "Orderid: " << word << endl;
+    helper = word;
+    ss >> word;
+    if (helper == "-1"){
+        word = "None";
+    }
+    cout << "timeLeft: " << word << endl;
+    (ss >> word)? cout << "ordersLeft: " << word << endl: cout << "ordersLeft: No Limit" << endl;
+    
+    
 }
 
 PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{
