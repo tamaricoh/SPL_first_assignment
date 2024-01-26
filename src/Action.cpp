@@ -32,6 +32,7 @@ SimulateStep :: SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){}
 
 void SimulateStep :: act(WareHouse &wareHouse){
     //===============================================
+    cout << "step:: act" << endl;
 }
 
 SimulateStep* SimulateStep:: clone() const{
@@ -59,7 +60,7 @@ void AddOrder:: act(WareHouse &wareHouse){
         return;
     }
     Customer& orderCustomer = wareHouse.getCustomer(customerId);
-    if ( orderCustomer.getMaxOrders() == orderCustomer.getNumOrders()){
+    if (!orderCustomer.canMakeOrder()){
         error("Cannot place this order");
         return;
     }
