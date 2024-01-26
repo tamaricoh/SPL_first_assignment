@@ -70,12 +70,30 @@ void CollectorVolunteer::acceptOrder(const Order &order) {
 
 string CollectorVolunteer::toString() const {
     // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <timeLeft> <coolDown>
-    return std::to_string(getId()) + " " +
-        getName()+ " " +
-        std::to_string(isBusy()) + " " +
-        std::to_string(getActiveOrderId()) + " " +
-        std::to_string(getTimeLeft()) + " " +
-        std::to_string(getCoolDown()) + " ";
+    // return std::to_string(getId()) + " " +
+    //     getName()+ " " +
+    //     std::to_string(isBusy()) + " " +
+    //     std::to_string(getActiveOrderId()) + " " +
+    //     std::to_string(getTimeLeft()) + " " +
+    //     std::to_string(getCoolDown()) + " ";
+    // Form - <volunteerId> <isBusy> <activeOrderId> <timeLeft>
+    string orderId = "None";
+    string timeLeft = "None";
+    string isBus = std::to_string(isBusy());
+
+    if (isBus == "True") {
+        orderId = std::to_string(getActiveOrderId());
+        timeLeft = std::to_string(getTimeLeft());
+    }
+    
+    string output = 
+        "VolunteerID: " + std::to_string(getId()) + "\n"
+        "isBusy: " + isBus + "\n"
+        "OrderID: " + orderId + "\n"
+        "TimeLeft: " + timeLeft + "\n"
+        "OrdersLeft: No Limit";
+
+    return output;
 }
 
 
@@ -112,8 +130,23 @@ int LimitedCollectorVolunteer:: getNumOrdersLeft() const{
 
 string LimitedCollectorVolunteer:: toString() const {
     // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <timeLeft> <coolDown> <ordersLeft> 
-    return (CollectorVolunteer::toString() +
-     " " + std::to_string(getNumOrdersLeft()));
+    string orderId = "None";
+    string timeLeft = "None";
+    string isBus = std::to_string(isBusy());
+
+    if (isBus == "True") {
+        orderId = std::to_string(getActiveOrderId());
+        timeLeft = std::to_string(getTimeLeft());
+    }
+    
+    string output = 
+        "VolunteerID: " + std::to_string(getId()) + "\n"
+        "isBusy: " + isBus + "\n"
+        "OrderID: " + orderId + "\n"
+        "TimeLeft: " + timeLeft + "\n"
+        "OrdersLeft: " + std::to_string(getNumOrdersLeft());
+
+    return output;
 }
 
 
@@ -164,12 +197,29 @@ void DriverVolunteer:: step() {
 }
 
 string DriverVolunteer:: toString() const {
-    // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <distanceLeft> <maxDistance>
-    return std::to_string(getId()) + " " +
-        std::to_string(isBusy()) + " " +
-        std::to_string(getActiveOrderId()) + " " +
-        std::to_string(getDistanceLeft()) + " " +
-        std::to_string(getMaxDistance()) + " ";
+    // Form - <volunteerId> <isBusy> <activeOrderId> <distanceLeft> 
+    // return std::to_string(getId()) + " " +
+    //     std::to_string(isBusy()) + " " +
+    //     std::to_string(getActiveOrderId()) + " " +
+    //     std::to_string(getDistanceLeft()) + " " +
+    //     std::to_string(getMaxDistance()) + " ";
+    string orderId = "None";
+    string timeLeft = "None";
+    string isBus = std::to_string(isBusy());
+
+    if (isBus == "True") {
+        orderId = std::to_string(getActiveOrderId());
+        timeLeft = std::to_string(getDistanceLeft());
+    }
+    
+    string output = 
+        "VolunteerID: " + std::to_string(getId()) + "\n"
+        "isBusy: " + isBus + "\n"
+        "OrderID: " + orderId + "\n"
+        "TimeLeft: " + timeLeft + "\n"
+        "OrdersLeft: No Limit";
+
+    return output;
 }
 
 
@@ -204,6 +254,22 @@ void LimitedDriverVolunteer:: acceptOrder(const Order &order) {
 }
 
 string LimitedDriverVolunteer:: toString() const {
-    // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <distanceLeft> <maxDistance> <ordersLeft> 
-    return (DriverVolunteer :: toString() + " " + std::to_string(getNumOrdersLeft()));
+    // Form - <volunteerId> <isBusy> <activeOrderId> <distanceLeft> <ordersLeft> 
+    string orderId = "None";
+    string timeLeft = "None";
+    string isBus = std::to_string(isBusy());
+
+    if (isBus == "True") {
+        orderId = std::to_string(getActiveOrderId());
+        timeLeft = std::to_string(getDistanceLeft());
+    }
+    
+    string output = 
+        "VolunteerID: " + std::to_string(getId()) + "\n"
+        "isBusy: " + isBus + "\n"
+        "OrderID: " + orderId + "\n"
+        "TimeLeft: " + timeLeft + "\n"
+        "OrdersLeft: " + std::to_string(getNumOrdersLeft());
+
+    return output;
 }
