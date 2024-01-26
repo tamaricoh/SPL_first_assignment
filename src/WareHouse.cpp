@@ -124,13 +124,10 @@ void WareHouse :: start(){
         if (firstWord == "customer") {
             // customer <customer_name> <customer_type> <customer_distance> <max_orders>
             string name;
-            ss >> name;
             string type;
-            ss >> type;
             string distance;
-            ss >> distance;
             string maxOrder;
-            ss >> maxOrder;
+            ss >> name >> type >> distance >> maxOrder;
             
             AddCustomer* addCustomer = new AddCustomer(name, type, stoi(distance), stoi(maxOrder));
             addCustomer -> act(*this);
