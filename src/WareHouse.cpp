@@ -280,6 +280,34 @@ void WareHouse:: addVolunteer(Volunteer* Volunteer){
 // rule of 5 ~~~~~~~~~~~~~~~~~~~~~~~~
 WareHouse:: ~WareHouse(){
     //================================================================
+    // delete all memory from the heap
+    for(Order* ord : pendingOrders){
+        delete ord;
+    }
+
+    for(Order* ord : inProcessOrders){
+        delete ord;
+    }
+
+    for(Order* ord : completedOrders){
+        delete ord;
+    }
+
+    for(Customer* cust : customers){
+        delete cust;
+    }
+
+    for(Volunteer* vol : volunteers){
+        delete vol;
+    }
+
+    for(BaseAction* act : actionsLog){
+        delete act;
+    }
+
+    delete noCustomer;
+    delete noOrder;
+    delete noVolunteer;
 }
 
 WareHouse:: WareHouse(const WareHouse &other){
