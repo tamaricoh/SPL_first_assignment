@@ -31,6 +31,7 @@ class Order {
         // new func
         int getDistance() const;
         string EnumToOrderStatus(OrderStatus type) const;
+        const string closeInfo() const;
 
 
     private:

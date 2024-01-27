@@ -28,11 +28,13 @@ class WareHouse {
         // new func
         int getOrderCount() const;
         int getCustomerCount() const;
-        const vector<Order*> getCustomerOrders(int customerId) const;
         void parse (const string &configFilePath);
         void addCustomer(Customer* customer);
         void addVolunteer(Volunteer* Volunteer);
         void cleanUp();
+        void step();
+        bool findCollector (Order& order) const;
+        bool findDriver (Order& order) const;
 
         // rule of 5
         virtual ~WareHouse();

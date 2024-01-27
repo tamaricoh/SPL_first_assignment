@@ -8,7 +8,6 @@
 #include "../include/Order.h"
 #include "../include/Action.h"
 
-using namespace std;
 
 WareHouse :: WareHouse(const string &configFilePath):
 isOpen(false),
@@ -24,7 +23,7 @@ void WareHouse :: start(){
     string input; 
     do {
         std::getline(std::cin,input);
-        stringstream ss(input);
+        std::stringstream ss(input);
         string firstWord;
         string word;
 
@@ -52,41 +51,45 @@ void WareHouse :: start(){
 
         if (firstWord == "customer") {
             // customer <customer_name> <customer_type> <customer_distance> <max_orders>
+            // iffffffffffff the info is correct to the act
             string name;
             string type;
             string distance;
             string maxOrder;
-            ss >> name >> type >> distance >> maxOrder;
-            
-            AddCustomer* addCustomer = new AddCustomer(name, type, stoi(distance), stoi(maxOrder));
-            addCustomer -> act(*this);
+            if(ss >> name >> type >> distance >> maxOrder){
+                AddCustomer* addCustomer = new AddCustomer(name, type, stoi(distance), stoi(maxOrder));
+                addCustomer -> act(*this);
+            }
             continue;
         }
 
         if (firstWord == "orderStatus") {
             // orderStatus <order_id>
             string orderId;
-            ss >> orderId;
-            PrintOrderStatus* orderStatus = new PrintOrderStatus(stoi(orderId));
-            orderStatus -> act(*this);
+            if(ss >> orderId){
+                PrintOrderStatus* orderStatus = new PrintOrderStatus(stoi(orderId));
+                orderStatus -> act(*this);
+            }
             continue;
         }
 
         if (firstWord == "customerStatus") {
             // customerStatus <customer_id>
             string customerId;
-            ss >> customerId;
-            PrintCustomerStatus* customerStatus = new PrintCustomerStatus(stoi(customerId));
-            customerStatus -> act(*this);
+            if(ss >> customerId){
+                PrintCustomerStatus* customerStatus = new PrintCustomerStatus(stoi(customerId));
+                customerStatus -> act(*this);
+            }
             continue;
         }
 
         if (firstWord == "volunteerStatus") {
             // volunteerStatus <volunteer_id>
             string volunteerId;
-            ss >> volunteerId;
-            PrintVolunteerStatus* volunteerStatus = new PrintVolunteerStatus(stoi(volunteerId));
-            volunteerStatus -> act(*this);
+            if(ss >> volunteerId){
+                PrintVolunteerStatus* volunteerStatus = new PrintVolunteerStatus(stoi(volunteerId));
+                volunteerStatus -> act(*this);
+            }
             continue;
         }
 
@@ -170,15 +173,24 @@ Order& WareHouse:: getOrder(int orderId) const{
 }
 
 void WareHouse:: close(){
+    for (Order* ord : pendingOrders){
+        std::cout << ord->closeInfo() << std::endl;
+    }
+    for (Order* ord : inProcessOrders){
+        std::cout << ord->closeInfo() << std::endl;
+    }
+    for (Order* ord : completedOrders){
+        std::cout << ord->closeInfo() << std::endl;
+    }
     isOpen = false;
 }
 
 void WareHouse:: open(){
      if (!isOpen) {
         isOpen = true;
-        cout << "Warehouse is open!" << endl;
+        std::cout << "Warehouse is open!" << std::endl;
     } else {
-        cout << "The Warehouse is already open." << endl;
+        std::cout << "The Warehouse is already open." << std::endl;
         close();
     }
 }
@@ -193,13 +205,10 @@ int WareHouse:: getCustomerCount() const{
     return customerCounter;
 }
 
-const vector<Order*> WareHouse:: getCustomerOrders(int customerId) const{
-    //================================================================
-}
 
 void WareHouse :: parse (const string &configFilePath){  
 
-    ifstream file(configFilePath); // Open the file
+    std:: ifstream file(configFilePath); // Open the file
 
     // Check if the file opened successfully
     if (file.is_open()) {
@@ -220,7 +229,7 @@ void WareHouse :: parse (const string &configFilePath){
                 continue; 
             }
 
-            istringstream iss(line);
+            std:: istringstream iss(line);
             iss >> firstWord >> name >> type >> dist;
 
             // for costumers
@@ -261,7 +270,7 @@ void WareHouse :: parse (const string &configFilePath){
                 id = volunteerCounter;
                 addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
             } 
-            cout << id << endl;
+            std::cout << id << std::endl;
             
         } 
     }
@@ -305,6 +314,80 @@ void WareHouse:: cleanUp(){
     delete noCustomer;
     delete noOrder;
     delete noVolunteer;
+}
+
+void WareHouse:: step(){
+    //  --1--
+    auto ordLoc = pendingOrders.begin();
+    while (ordLoc != pendingOrders.end()){
+        Order* order = *ordLoc;
+        if (order->getStatus() == OrderStatus::PENDING && findCollector(*order)){
+            inProcessOrders.push_back(order);
+            ordLoc = pendingOrders.erase(ordLoc);
+        }
+        else if (order->getStatus() == OrderStatus::COLLECTING && findDriver(*order)){
+            inProcessOrders.push_back(order);
+            ordLoc = pendingOrders.erase(ordLoc);
+        }
+        else {
+            ++ordLoc;
+        }
+    }
+    //  --2--
+    for (Volunteer* vol : volunteers){
+        bool checkIfComplete = vol -> isBusy();
+        vol -> step();
+        if (checkIfComplete != vol->isBusy()){
+
+        }
+    }
+
+    // --3--
+
+}
+
+bool WareHouse:: findCollector(Order& order) const{
+    for(Volunteer* volunteer : volunteers){
+        if (LimitedCollectorVolunteer* limitedCollectorVolunteer = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)) {
+            if (limitedCollectorVolunteer->canTakeOrder(order)){
+                limitedCollectorVolunteer->acceptOrder(order);
+                order.setCollectorId(limitedCollectorVolunteer->getId());
+                order.setStatus(OrderStatus::COLLECTING);
+                return true;
+            }
+        }
+        else if (CollectorVolunteer* collectorVolunteer = dynamic_cast<CollectorVolunteer*>(volunteer)) {
+            if (collectorVolunteer->canTakeOrder(order)){
+                collectorVolunteer->acceptOrder(order);
+                order.setCollectorId(collectorVolunteer->getId());
+                order.setStatus(OrderStatus::COLLECTING);
+                return true;
+            }
+        } 
+    }
+    return false; 
+}
+
+bool WareHouse:: findDriver(Order& order) const{
+    for(Volunteer* volunteer : volunteers){
+        if (LimitedDriverVolunteer* limitedDriverVolunteer = dynamic_cast<LimitedDriverVolunteer*>(volunteer)) {
+            if (limitedDriverVolunteer->canTakeOrder(order)){
+                limitedDriverVolunteer->acceptOrder(order);
+                order.setCollectorId(limitedDriverVolunteer->getId());
+                order.setStatus(OrderStatus::DELIVERING);
+                return true;
+            }
+        }
+        else if (DriverVolunteer* driverVolunteer = dynamic_cast<DriverVolunteer*>(volunteer)) {
+            if (driverVolunteer->canTakeOrder(order)){
+                driverVolunteer->acceptOrder(order);
+                order.setCollectorId(driverVolunteer->getId());
+                order.setStatus(OrderStatus::DELIVERING);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 

@@ -80,3 +80,14 @@ const string Order :: toString() const{
     
     return output;
 }
+
+const string Order :: closeInfo() const{
+    // OrderID: <order_1_id> , CustomerID<customer_1_id> , OrderStatus: <order_1_status>
+    string output =
+        "OrderId: " + std::to_string(id) +
+        "CustomerID: " + std::to_string(customerId) +
+        "OrderStatus: " + EnumToOrderStatus(status) + "\n";
+    
+    return output;
+
+}

@@ -30,9 +30,12 @@ string BaseAction:: getErrorMsg() const{
 SimulateStep :: SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){}
 
 void SimulateStep :: act(WareHouse &wareHouse){
-    //===============================================
-    std::cout << "step:: act" << std::endl;
     wareHouse.addAction(this);
+    int counter = 0;
+    while(counter < numOfSteps){
+        wareHouse.step();
+        counter++;
+    }
 }
 
 SimulateStep* SimulateStep:: clone() const{
@@ -251,6 +254,7 @@ void PrintActionsLog:: act(WareHouse& wareHouse){
     for (BaseAction* act : wareHouse.getActions()){
         std::cout << act->toString() << std::endl;
     }
+    std::cout << "\n" << std::endl;
     wareHouse.addAction(this);
 
 }
@@ -275,8 +279,8 @@ string PrintActionsLog:: toString() const{
 Close:: Close(){}
 
 void Close:: act(WareHouse& wareHouse){
-    //===============================================
-    // wareHouse.addAction(this); ?????????????????????
+    wareHouse.close();
+    wareHouse.~WareHouse();
 }
 
 Close* Close:: clone() const{

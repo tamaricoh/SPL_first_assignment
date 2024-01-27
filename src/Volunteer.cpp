@@ -22,13 +22,23 @@ int Volunteer::getCompletedOrderId() const{
 }
 
 bool Volunteer::isBusy() const{
-    return(activeOrderId != completedOrderId);
+    return(activeOrderId != NO_ORDER);
+}
+
+string Volunteer:: type(){
+    return typeStr;
+}
+
+void Volunteer:: setType(string type){
+    typeStr = type;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
 //CollectorVolunteer
 CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
-Volunteer(id, name), coolDown(coolDown), timeLeft(0){}
+Volunteer(id, name), coolDown(coolDown), timeLeft(0){
+    setType("CollectorVolunteer");
+}
 
 CollectorVolunteer* CollectorVolunteer:: clone() const{
     return new CollectorVolunteer(*this);
@@ -87,15 +97,14 @@ string CollectorVolunteer::toString() const {
 
     return output;
 }
-string CollectorVolunteer:: type(){
-    return "CollectorVolunteer";
-}
 
 
 //-------------------------------------------------------------------------------------------------------------------
 //LimitedCollectorVolunteer
 LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, const string& name, int coolDown ,int maxOrders) :
-CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){}
+CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){
+    setType("LimitedCollectorVolunteer");
+}
 
 LimitedCollectorVolunteer* LimitedCollectorVolunteer:: clone() const {
     return new LimitedCollectorVolunteer(*this);
@@ -143,14 +152,13 @@ string LimitedCollectorVolunteer:: toString() const {
 
     return output;
 }
-string LimitedCollectorVolunteer:: type(){
-    return "LimitedCollectorVolunteer";
-}
 
 //-------------------------------------------------------------------------------------------------------------------
 //DriverVolunteer
 DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
-Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){}
+Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){
+    setType("DriverVolunteer");
+}
 
 DriverVolunteer* DriverVolunteer:: clone() const{
     return new DriverVolunteer(*this);
@@ -212,14 +220,13 @@ string DriverVolunteer:: toString() const {
 
     return output;
 }
-string DriverVolunteer:: type(){
-    return "DriverVolunteer";
-}
 
 //-------------------------------------------------------------------------------------------------------------------
 //LimitedDriverVolunteer
 LimitedDriverVolunteer:: LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
-DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){}
+DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){
+    setType("LimitedDriverVolunteer");
+}
 
 LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const {
     return new LimitedDriverVolunteer(*this);
@@ -265,8 +272,4 @@ string LimitedDriverVolunteer:: toString() const {
         "OrdersLeft: " + std::to_string(getNumOrdersLeft());
 
     return output;
-}
-
-string LimitedDriverVolunteer:: type(){
-    return "LimitedDriverVolunteer";
 }
