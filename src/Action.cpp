@@ -281,8 +281,11 @@ string PrintActionsLog:: toString() const{
 Close:: Close(){}
 
 void Close:: act(WareHouse& wareHouse){
+    std::cout << "Tamar: act"<< std::endl;
+    wareHouse.addAction(this);
     wareHouse.close();
-    wareHouse.~WareHouse();
+    // wareHouse.~WareHouse();
+    std::cout << "Tamar: end"<< std::endl;
 }
 
 Close* Close:: clone() const{

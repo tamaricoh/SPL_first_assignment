@@ -35,6 +35,7 @@ class WareHouse {
         void step();
         bool findCollector (Order& order) const;
         bool findDriver (Order& order) const;
+        bool isNumber(const std::string& str);
 
         // rule of 5
         virtual ~WareHouse();

@@ -22,17 +22,19 @@ void WareHouse :: start(){
     open();
     string input; 
     do {
+        std::cout << "Tamar: start"<< std::endl;
         std::getline(std::cin,input);
         std::stringstream ss(input);
         string firstWord;
-        string word;
+        string input;
+        string nothing;
 
         ss >> firstWord;
         // iffffffffffff the info is correct to the act====================================================
         if (firstWord == "step") {
             // step <numOfSteps>
-            if (ss >> word){
-                int numOfSteps = stoi(word);
+            if (ss >> input && !(ss>>nothing) && isNumber(input)){
+                int numOfSteps = stoi(input);
                 SimulateStep* step = new SimulateStep(numOfSteps);
                 step -> act(*this);
             }
@@ -41,8 +43,8 @@ void WareHouse :: start(){
 
         if (firstWord == "order") {
             // order <customerId>
-            if (ss >> word){
-                int id = stoi(word);
+            if (ss >> input && !(ss>>nothing) && isNumber(input)){
+                int id = stoi(input);
                 AddOrder* addOrder = new AddOrder(id);
                 addOrder -> act(*this);
             }
@@ -55,7 +57,7 @@ void WareHouse :: start(){
             string type;
             string distance;
             string maxOrder;
-            if(ss >> name >> type >> distance >> maxOrder){
+            if(ss >> name >> type >> distance >> maxOrder && !(ss >> nothing) && isNumber(distance) && isNumber(maxOrder)){
                 AddCustomer* addCustomer = new AddCustomer(name, type, stoi(distance), stoi(maxOrder));
                 addCustomer -> act(*this);
             }
@@ -64,9 +66,8 @@ void WareHouse :: start(){
 
         if (firstWord == "orderStatus") {
             // orderStatus <order_id>
-            string orderId;
-            if(ss >> orderId){
-                PrintOrderStatus* orderStatus = new PrintOrderStatus(stoi(orderId));
+            if(ss >> input && !(ss>>nothing) && isNumber(input)){
+                PrintOrderStatus* orderStatus = new PrintOrderStatus(stoi(input));
                 orderStatus -> act(*this);
             }
             continue;
@@ -74,9 +75,8 @@ void WareHouse :: start(){
 
         if (firstWord == "customerStatus") {
             // customerStatus <customer_id>
-            string customerId;
-            if(ss >> customerId){
-                PrintCustomerStatus* customerStatus = new PrintCustomerStatus(stoi(customerId));
+            if(ss >> input && !(ss>>nothing) && isNumber(input)){
+                PrintCustomerStatus* customerStatus = new PrintCustomerStatus(stoi(input));
                 customerStatus -> act(*this);
             }
             continue;
@@ -84,33 +84,41 @@ void WareHouse :: start(){
 
         if (firstWord == "volunteerStatus") {
             // volunteerStatus <volunteer_id>
-            string volunteerId;
-            if(ss >> volunteerId){
-                PrintVolunteerStatus* volunteerStatus = new PrintVolunteerStatus(stoi(volunteerId));
+            if(ss >> input && !(ss>>nothing) && isNumber(input)){
+                PrintVolunteerStatus* volunteerStatus = new PrintVolunteerStatus(stoi(input));
                 volunteerStatus -> act(*this);
             }
             continue;
         }
 
         if (firstWord == "log") {
-            PrintActionsLog* log = new PrintActionsLog();
-            log -> act(*this);
+            if (!(ss >> input)){
+                PrintActionsLog* log = new PrintActionsLog();
+                log -> act(*this);
+            }
             continue;
         }
 
         if (firstWord == "close") {
-            Close* cl = new Close(); // delete memory========================
-            cl -> act(*this);
+            if (!(ss >> input)){
+                std::cout << "Tamar: start closing"<< std::endl;
+                Close* cl = new Close(); // line 103
+                cl -> act(*this);
+            }
             continue;
         }
 
         if (firstWord == "backup") {
-            // ==============================================================
+            if (!(ss >> input)){
+                // ==============================================================
+            }
             continue;
         }
 
         if (firstWord == "restore") {
-            // ==============================================================
+            if (!(ss >> input)){
+                // ==============================================================
+            }
             continue;
         }
     std::cout << "\n" << std::endl;
@@ -171,6 +179,7 @@ Order& WareHouse:: getOrder(int orderId) const{
 }
 
 void WareHouse:: close(){
+    std::cout << "Tamar: close"<< std::endl;
     for (Order* ord : pendingOrders){
         std::cout << ord->closeInfo() << std::endl;
     }
@@ -285,33 +294,51 @@ void WareHouse:: addVolunteer(Volunteer* Volunteer){
 }
 
 void WareHouse:: cleanUp(){
+    std::cout << "Tamar: cleanup "<< std::endl;
     for(Order* ord : pendingOrders){
+        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
+        ord = nullptr;
     }
 
     for(Order* ord : inProcessOrders){
+        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
+        ord = nullptr;
     }
 
     for(Order* ord : completedOrders){
+        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
+        ord = nullptr;
     }
 
     for(Customer* cust : customers){
+        std::cout << "Tamar: cust " << cust->getId() << std::endl;
         delete cust;
+        cust = nullptr;
     }
 
     for(Volunteer* vol : volunteers){
+        std::cout << "Tamar: vol " << vol->getId() << std::endl;
         delete vol;
+        vol = nullptr;
     }
 
     for(BaseAction* act : actionsLog){
+        std::cout << "Tamar: " << "blah" << std::endl;
         delete act;
+        act = nullptr;
     }
 
     delete noCustomer;
+    noCustomer = nullptr;
+
     delete noOrder;
+    noOrder = nullptr;
+
     delete noVolunteer;
+    noVolunteer = nullptr;
 }
 
 void WareHouse:: step(){
@@ -428,10 +455,20 @@ bool WareHouse:: findDriver(Order& order) const{
     return false;
 }
 
+bool WareHouse:: isNumber(const std::string& str) {
+    for (char ch : str) {
+        if (!isdigit(ch)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 // rule of 5 ~~~~~~~~~~~~~~~~~~~~~~~~
 WareHouse:: ~WareHouse(){
     // delete all memory from the heap
+    std::cout << "Tamar: ~warehouse"<< std::endl;
     cleanUp();
 }
 
