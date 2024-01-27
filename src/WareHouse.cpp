@@ -25,7 +25,6 @@ void WareHouse :: parse (const string &configFilePath){
 
     // Check if the file opened successfully
     if (file.is_open()) {
-        cout << "Tamar" << endl;
         string line;
         string firstWord;
         string name;
@@ -167,7 +166,7 @@ void WareHouse :: start(){
         }
 
         if (firstWord == "close") {
-            Close* cl = new Close(); // delete memory
+            Close* cl = new Close(); // delete memory========================
             cl -> act(*this);
             close();
             continue;
@@ -202,7 +201,9 @@ void WareHouse:: addVolunteer(Volunteer* Volunteer){
     volunteerCounter++;
 }
 
-void WareHouse:: addAction(BaseAction* action){}
+void WareHouse:: addAction(BaseAction* action){
+    //================================================================
+}
 
 Customer& WareHouse:: getCustomer(int customerId) const{
     for (Customer* customer : customers) {
@@ -269,4 +270,6 @@ int WareHouse:: getCustomerCount() const{
     return customerCounter;
 }
 
-const vector<Order*> WareHouse:: getCustomerOrders(int customerId) const{}
+const vector<Order*> WareHouse:: getCustomerOrders(int customerId) const{
+    //================================================================
+}

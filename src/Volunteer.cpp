@@ -179,7 +179,7 @@ void DriverVolunteer:: acceptOrder(const Order &order) {
     distanceLeft = maxDistance;
 } 
 void DriverVolunteer:: step() {
-    if (isBusy() && decreaseDistanceLeft()){ // if thwe volunteer has completed the order in this step,
+    if (isBusy() && decreaseDistanceLeft()){ // if the volunteer has completed the order in this step,
         distanceLeft = 0;
         completedOrderId = activeOrderId;
         activeOrderId = NO_ORDER;
