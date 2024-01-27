@@ -15,21 +15,28 @@ class WareHouse {
 
     public:
         WareHouse(const string &configFilePath);
-        void parse (const string &configFilePath);
         void start();
+        const vector<BaseAction*> &getActions() const;
         void addOrder(Order* order);
-        void addCustomer(Customer* customer);
-        void addVolunteer(Volunteer* Volunteer);
         void addAction(BaseAction* action);
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
-        const vector<BaseAction*> &getActions() const;
         void close();
         void open();
+
+        // new func
         int getOrderCount() const;
         int getCustomerCount() const;
         const vector<Order*> getCustomerOrders(int customerId) const;
+        void parse (const string &configFilePath);
+        void addCustomer(Customer* customer);
+        void addVolunteer(Volunteer* Volunteer);
+
+        // rule of 5
+        virtual ~WareHouse();
+        WareHouse(const WareHouse &other);
+        WareHouse& operator=(const WareHouse &other);
 
     private:
         bool isOpen;
@@ -41,6 +48,8 @@ class WareHouse {
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs
+
+        // new member
         int orderCounter; //For assigning unique order IDs
         Customer* noCustomer;
         Volunteer* noVolunteer;

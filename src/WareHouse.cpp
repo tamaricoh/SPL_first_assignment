@@ -19,76 +19,6 @@ noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(
     parse(configFilePath);
 }
 
-void WareHouse :: parse (const string &configFilePath){  
-
-    ifstream file(configFilePath); // Open the file
-
-    // Check if the file opened successfully
-    if (file.is_open()) {
-        string line;
-        string firstWord;
-        string name;
-        string orderLimit;
-        string type; // or role
-        string dist;
-        string distPerStep;
-        string temp; // Becaue orderLimit is optional in volunteers
-        int id;
-
-        while (getline(file, line)) { 
-
-            // Skip lines that beggin with '#'
-            if ((line.size() == 0) | ( line.size() > 0 && line[0] == '#')) {
-                continue; 
-            }
-
-            istringstream iss(line);
-            iss >> firstWord >> name >> type >> dist;
-
-            // for costumers
-            if (type == "civilian"){
-                iss >> orderLimit;
-                id = customerCounter;
-                addCustomer(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
-            }
-            if (type == "soldier"){
-                iss >> orderLimit;
-                id = customerCounter;
-                addCustomer(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
-            }
-
-            
-            // for volunteers
-            if (type.find("driver") != std::string::npos){
-                iss >> distPerStep;
-            }
-
-            if(iss >> temp && temp != "#"){
-                orderLimit = temp;
-            } 
-
-            if (type == "collector"){
-                id = volunteerCounter;
-                addVolunteer(new CollectorVolunteer(id, name, stoi(dist)));
-            }
-            if (type == "limited_collector"){
-                id = volunteerCounter;
-                addVolunteer(new LimitedCollectorVolunteer(id, name, stoi(dist), stoi(orderLimit)));
-            }
-            if (type == "driver"){
-                id = volunteerCounter;
-                addVolunteer(new DriverVolunteer(id, name, stoi(dist), stoi(distPerStep)));
-            }
-            if (type == "limited_driver"){
-                id = volunteerCounter;
-                addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
-            } 
-            cout << id << endl;
-            
-        } 
-    }
-}
-
 void WareHouse :: start(){
     open();
     string input; 
@@ -185,20 +115,14 @@ void WareHouse :: start(){
     } while(isOpen);
 }
 
+const vector<BaseAction*>& WareHouse:: getActions() const{
+    return actionsLog;
+}
+
 void WareHouse:: addOrder(Order* order){
     // order added to pendingOrders because this func handles only new orders.
     pendingOrders.push_back(order);
     orderCounter++;
-}
-
-void WareHouse:: addCustomer(Customer* Customer){
-    customers.push_back(Customer);
-    customerCounter++;
-}
-
-void WareHouse:: addVolunteer(Volunteer* Volunteer){
-    volunteers.push_back(Volunteer);
-    volunteerCounter++;
 }
 
 void WareHouse:: addAction(BaseAction* action){
@@ -244,10 +168,6 @@ Order& WareHouse:: getOrder(int orderId) const{
     return *noOrder;
 }
 
-const vector<BaseAction*>& WareHouse:: getActions() const{
-    return actionsLog;
-}
-
 void WareHouse:: close(){
     isOpen = false;
 }
@@ -262,6 +182,8 @@ void WareHouse:: open(){
     }
 }
 
+
+// new func ~~~~~~~~~~~~~~~~~~~~~~~~
 int WareHouse:: getOrderCount() const{
     return orderCounter;
 }
@@ -273,3 +195,116 @@ int WareHouse:: getCustomerCount() const{
 const vector<Order*> WareHouse:: getCustomerOrders(int customerId) const{
     //================================================================
 }
+
+void WareHouse :: parse (const string &configFilePath){  
+
+    ifstream file(configFilePath); // Open the file
+
+    // Check if the file opened successfully
+    if (file.is_open()) {
+        string line;
+        string firstWord;
+        string name;
+        string orderLimit;
+        string type; // or role
+        string dist;
+        string distPerStep;
+        string temp; // Becaue orderLimit is optional in volunteers
+        int id;
+
+        while (getline(file, line)) { 
+
+            // Skip lines that beggin with '#'
+            if ((line.size() == 0) | ( line.size() > 0 && line[0] == '#')) {
+                continue; 
+            }
+
+            istringstream iss(line);
+            iss >> firstWord >> name >> type >> dist;
+
+            // for costumers
+            if (type == "civilian"){
+                iss >> orderLimit;
+                id = customerCounter;
+                addCustomer(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
+            }
+            if (type == "soldier"){
+                iss >> orderLimit;
+                id = customerCounter;
+                addCustomer(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
+            }
+
+            
+            // for volunteers
+            if (type.find("driver") != std::string::npos){
+                iss >> distPerStep;
+            }
+
+            if(iss >> temp && temp != "#"){
+                orderLimit = temp;
+            } 
+
+            if (type == "collector"){
+                id = volunteerCounter;
+                addVolunteer(new CollectorVolunteer(id, name, stoi(dist)));
+            }
+            if (type == "limited_collector"){
+                id = volunteerCounter;
+                addVolunteer(new LimitedCollectorVolunteer(id, name, stoi(dist), stoi(orderLimit)));
+            }
+            if (type == "driver"){
+                id = volunteerCounter;
+                addVolunteer(new DriverVolunteer(id, name, stoi(dist), stoi(distPerStep)));
+            }
+            if (type == "limited_driver"){
+                id = volunteerCounter;
+                addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
+            } 
+            cout << id << endl;
+            
+        } 
+    }
+}
+
+void WareHouse:: addCustomer(Customer* Customer){
+    customers.push_back(Customer);
+    customerCounter++;
+}
+
+void WareHouse:: addVolunteer(Volunteer* Volunteer){
+    volunteers.push_back(Volunteer);
+    volunteerCounter++;
+}
+
+
+// rule of 5 ~~~~~~~~~~~~~~~~~~~~~~~~
+WareHouse:: ~WareHouse(){
+    //================================================================
+}
+
+WareHouse:: WareHouse(const WareHouse &other){
+    //================================================================
+}
+
+WareHouse& WareHouse:: operator=(const WareHouse &other){
+    //================================================================
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

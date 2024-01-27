@@ -6,7 +6,6 @@
 #include "WareHouse.h"
 using std::string;
 using std::vector;
-using namespace std;
 
 
 enum class ActionStatus{
@@ -61,12 +60,15 @@ class AddOrder : public BaseAction {
 
 class AddCustomer : public BaseAction {
     public:
-        AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders);
-        CustomerType CustomerTypeToEnum(const string& type) const;
-        string EnumToCustomerType(CustomerType type) const; 
+        AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders); 
         void act(WareHouse &wareHouse) override;
         AddCustomer *clone() const override;
         string toString() const override;
+
+        // new func
+        CustomerType CustomerTypeToEnum(const string& type) const;
+        string EnumToCustomerType(CustomerType type) const;
+        
     private:
         const string customerName;
         const CustomerType customerType;

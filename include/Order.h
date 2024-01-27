@@ -25,10 +25,13 @@ class Order {
         void setDriverId(int driverId);
         int getCollectorId() const;
         int getDriverId() const;
-        int getDistance() const;
         OrderStatus getStatus() const;
-        string EnumToOrderStatus(OrderStatus type) const;
         const string toString() const;
+
+        // new func
+        int getDistance() const;
+        string EnumToOrderStatus(OrderStatus type) const;
+
 
     private:
         const int id;

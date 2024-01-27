@@ -1,5 +1,4 @@
 #include "../include/Action.h"
-#include "../include/WareHouse.h"
 #include "../include/Order.h"
 #include "../include/Customer.h"
 #include "../include/Volunteer.h"
@@ -17,7 +16,7 @@ void BaseAction:: complete(){
 void BaseAction:: error(string errorMsg){
     status = ActionStatus::ERROR;
     this -> errorMsg = errorMsg;
-    cout << "Error: " << errorMsg << endl;
+    std::cout << "Error: " << errorMsg << std::endl;
     
 }
 
@@ -32,7 +31,7 @@ SimulateStep :: SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){}
 
 void SimulateStep :: act(WareHouse &wareHouse){
     //===============================================
-    cout << "step:: act" << endl;
+    std::cout << "step:: act" << std::endl;
 }
 
 SimulateStep* SimulateStep:: clone() const{
@@ -151,7 +150,7 @@ void PrintOrderStatus:: act(WareHouse& wareHouse){
         error("Order does not exist");
         return;
     }
-    cout << order.toString() << endl;
+    std::cout << order.toString() << std::endl;
 }
 
 PrintOrderStatus* PrintOrderStatus:: clone() const{
@@ -202,7 +201,7 @@ void PrintVolunteerStatus:: act(WareHouse& wareHouse){
         error("Order does not exist");
         return;
     }
-    cout << volunteer.toString() << endl;
+    std::cout << volunteer.toString() << std::endl;
 }
 
 PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{
