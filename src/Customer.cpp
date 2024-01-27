@@ -30,11 +30,11 @@ bool Customer :: canMakeOrder() const{
     return (getNumOrders() < getMaxOrders());
 }
 
-const vector<int>& Customer :: getOrdersIds() const{
+const vector<int>& Customer:: getOrdersIds() const{
     return ordersId;
 }
 
-int Customer :: addOrder(int orderId){
+int Customer:: addOrder(int orderId){
     if (canMakeOrder()) {
         ordersId.push_back(orderId);
         return orderId;

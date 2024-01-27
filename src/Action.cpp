@@ -32,6 +32,7 @@ SimulateStep :: SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){}
 void SimulateStep :: act(WareHouse &wareHouse){
     //===============================================
     std::cout << "step:: act" << std::endl;
+    wareHouse.addAction(this);
 }
 
 SimulateStep* SimulateStep:: clone() const{
@@ -43,9 +44,9 @@ std:: string SimulateStep:: toString() const{
     string output = "SimulateStep " + std::to_string(numOfSteps)+ " " ;
 
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -54,6 +55,7 @@ std:: string SimulateStep:: toString() const{
 AddOrder:: AddOrder(int id) : customerId(id){}
 
 void AddOrder:: act(WareHouse &wareHouse){
+    wareHouse.addAction(this);
     if (customerId > wareHouse.getCustomerCount()){
         error("Cannot place this order");
         return;
@@ -61,14 +63,17 @@ void AddOrder:: act(WareHouse &wareHouse){
     Customer& orderCustomer = wareHouse.getCustomer(customerId);
     if (!orderCustomer.canMakeOrder()){
         error("Cannot place this order");
+        
         return;
     }
     int OrderId = wareHouse.getOrderCount();
+    orderCustomer.addOrder(OrderId);
     int distance = orderCustomer.getCustomerDistance();
     Order* newOrder = new Order(OrderId, customerId, distance);
     newOrder->setStatus(OrderStatus::PENDING);
     wareHouse.addOrder(newOrder);
     complete();
+    // wareHouse.addAction(this);
 }
 
 AddOrder* AddOrder:: clone() const{
@@ -80,9 +85,9 @@ string AddOrder:: toString() const{
     string output = "AddOrder " + std::to_string(customerId)+ " ";
 
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -120,6 +125,7 @@ void AddCustomer:: act(WareHouse &wareHouse){
     }
     wareHouse.addCustomer(newCustomer);
     complete();
+    wareHouse.addAction(this);
 }
 
 AddCustomer* AddCustomer:: clone() const{
@@ -134,9 +140,9 @@ string AddCustomer:: toString() const{
     std::to_string(maxOrders)+ " ";
 
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -151,6 +157,7 @@ void PrintOrderStatus:: act(WareHouse& wareHouse){
         return;
     }
     std::cout << order.toString() << std::endl;
+    wareHouse.addAction(this);
 }
 
 PrintOrderStatus* PrintOrderStatus:: clone() const{
@@ -162,9 +169,9 @@ string PrintOrderStatus:: toString() const{
     string output = "PrintOrderStatus " + std::to_string(orderId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -174,6 +181,22 @@ PrintCustomerStatus:: PrintCustomerStatus(int id) : customerId(customerId){}
 
 void PrintCustomerStatus:: act(WareHouse& wareHouse){
     //===============================================
+    Customer& customer = wareHouse.getCustomer(customerId);
+    if (customer.getId() == -1){
+        error("Customer does not exist");
+        return;
+    }
+    string output = 
+        "CustomerID: " + std::to_string(customer.getId()) + "\n";
+
+    for (int id : customer.getOrdersIds()){
+        Order ord = wareHouse.getOrder(id);
+        output += "OrderId: " + std::to_string(ord.getId()) + "\n"
+            "OrderStatus: " + ord.EnumToOrderStatus(ord.getStatus()) + "\n";
+    }
+    output += "numOrdersLeft: " + std::to_string(customer.getMaxOrders()-customer.getNumOrders()) +"\n";
+    std::cout << output << std::endl;
+    wareHouse.addAction(this);
 }
 
 PrintCustomerStatus* PrintCustomerStatus:: clone() const{
@@ -185,9 +208,9 @@ string PrintCustomerStatus:: toString() const{
     string output = "PrintCustomerStatus " + std::to_string(customerId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -198,10 +221,11 @@ PrintVolunteerStatus:: PrintVolunteerStatus(int id) : volunteerId(id){}
 void PrintVolunteerStatus:: act(WareHouse& wareHouse){
     Volunteer& volunteer = wareHouse.getVolunteer(volunteerId);
     if (volunteer.getId() == -1){
-        error("Order does not exist");
+        error("Volunteer does not exist");
         return;
     }
     std::cout << volunteer.toString() << std::endl;
+    wareHouse.addAction(this);
 }
 
 PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{
@@ -213,9 +237,9 @@ string PrintVolunteerStatus:: toString() const{
     string output = "PrintVolunteerStatus " + std::to_string(volunteerId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -224,7 +248,11 @@ string PrintVolunteerStatus:: toString() const{
 PrintActionsLog:: PrintActionsLog(){}
 
 void PrintActionsLog:: act(WareHouse& wareHouse){
-    //===============================================
+    for (BaseAction* act : wareHouse.getActions()){
+        std::cout << act->toString() << std::endl;
+    }
+    wareHouse.addAction(this);
+
 }
 
 PrintActionsLog* PrintActionsLog:: clone() const{
@@ -232,14 +260,13 @@ PrintActionsLog* PrintActionsLog:: clone() const{
 }
 
 string PrintActionsLog:: toString() const{
-    //===============================================
     // <action_1_name> <action_1_args> <action_1_status>
-    // string output = "PrintVolunteerStatus ";
+    string output = "PrintVolunteerStatus ";
     
-    // if (getStatus() == ActionStatus::COMPLETED){
-    //     return output + "Completed";
-    // }
-    // return output + "Error: " + getErrorMsg();
+    if (getStatus() == ActionStatus::COMPLETED){
+        return output + "COMPLETED";
+    }
+    return output + "ERROR";
 }
 
 
@@ -249,6 +276,7 @@ Close:: Close(){}
 
 void Close:: act(WareHouse& wareHouse){
     //===============================================
+    // wareHouse.addAction(this); ?????????????????????
 }
 
 Close* Close:: clone() const{
@@ -260,9 +288,9 @@ string Close:: toString() const{
     string output = "Close ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -272,6 +300,7 @@ BackupWareHouse:: BackupWareHouse(){}
 
 void BackupWareHouse:: act(WareHouse& wareHouse){
     //===============================================
+    wareHouse.addAction(this);
 }
 
 BackupWareHouse* BackupWareHouse:: clone() const{
@@ -283,9 +312,9 @@ string BackupWareHouse:: toString() const{
     string output = "BackupWareHouse ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }
 
 
@@ -295,6 +324,7 @@ RestoreWareHouse:: RestoreWareHouse(){}
 
 void RestoreWareHouse:: act(WareHouse& wareHouse){
     //===============================================
+    wareHouse.addAction(this);
 }
 
 RestoreWareHouse* RestoreWareHouse:: clone() const{
@@ -306,7 +336,7 @@ string RestoreWareHouse:: toString() const{
     string output = "RestoreWareHouse ";
     
     if (getStatus() == ActionStatus::COMPLETED){
-        return output + "Completed";
+        return output + "COMPLETED";
     }
-    return output + "Error: " + getErrorMsg();
+    return output + "ERROR";
 }

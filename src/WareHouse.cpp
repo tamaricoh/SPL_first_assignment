@@ -91,7 +91,8 @@ void WareHouse :: start(){
         }
 
         if (firstWord == "log") {
-            // ==============================================================
+            PrintActionsLog* log = new PrintActionsLog();
+            log -> act(*this);
             continue;
         }
 
@@ -126,7 +127,7 @@ void WareHouse:: addOrder(Order* order){
 }
 
 void WareHouse:: addAction(BaseAction* action){
-    //================================================================
+    actionsLog.push_back(action);
 }
 
 Customer& WareHouse:: getCustomer(int customerId) const{
