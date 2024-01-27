@@ -18,7 +18,7 @@ class Volunteer {
         virtual bool hasOrdersLeft() const = 0; // Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
         virtual bool canTakeOrder(const Order &order) const = 0; // Signal if the volunteer can take the order.      
         virtual void acceptOrder(const Order &order) = 0; // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
-                
+        virtual string type() =0;
         virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
 
         virtual string toString() const = 0;
@@ -48,6 +48,7 @@ class CollectorVolunteer: public Volunteer {
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
         string toString() const override;
+        virtual string type() override;
     
     private:
         const int coolDown; // The time it takes the volunteer to process an order
@@ -62,6 +63,7 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
+        virtual string type() override;
 
         int getMaxOrders() const;
         int getNumOrdersLeft() const;
@@ -87,6 +89,7 @@ class DriverVolunteer: public Volunteer {
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance
         void step() override; // Decrease distanceLeft by distancePerStep
         string toString() const override;
+        virtual string type() override;
 
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
@@ -105,6 +108,7 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy, the order is within the maxDistance.
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance and decrease ordersLeft
         string toString() const override;
+        virtual string type() override;
 
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation

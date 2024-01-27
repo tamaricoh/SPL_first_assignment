@@ -87,6 +87,10 @@ string CollectorVolunteer::toString() const {
 
     return output;
 }
+string CollectorVolunteer:: type(){
+    return "CollectorVolunteer";
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------
 //LimitedCollectorVolunteer
@@ -138,6 +142,9 @@ string LimitedCollectorVolunteer:: toString() const {
         "OrdersLeft: " + std::to_string(getNumOrdersLeft());
 
     return output;
+}
+string LimitedCollectorVolunteer:: type(){
+    return "LimitedCollectorVolunteer";
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -205,6 +212,9 @@ string DriverVolunteer:: toString() const {
 
     return output;
 }
+string DriverVolunteer:: type(){
+    return "DriverVolunteer";
+}
 
 //-------------------------------------------------------------------------------------------------------------------
 //LimitedDriverVolunteer
@@ -255,4 +265,8 @@ string LimitedDriverVolunteer:: toString() const {
         "OrdersLeft: " + std::to_string(getNumOrdersLeft());
 
     return output;
+}
+
+string LimitedDriverVolunteer:: type(){
+    return "LimitedDriverVolunteer";
 }
