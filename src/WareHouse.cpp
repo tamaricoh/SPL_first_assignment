@@ -28,7 +28,7 @@ void WareHouse :: start(){
         string word;
 
         ss >> firstWord;
-
+        // iffffffffffff the info is correct to the act====================================================
         if (firstWord == "step") {
             // step <numOfSteps>
             if (ss >> word){
@@ -51,7 +51,6 @@ void WareHouse :: start(){
 
         if (firstWord == "customer") {
             // customer <customer_name> <customer_type> <customer_distance> <max_orders>
-            // iffffffffffff the info is correct to the act
             string name;
             string type;
             string distance;
@@ -102,7 +101,6 @@ void WareHouse :: start(){
         if (firstWord == "close") {
             Close* cl = new Close(); // delete memory========================
             cl -> act(*this);
-            close();
             continue;
         }
 
@@ -115,7 +113,7 @@ void WareHouse :: start(){
             // ==============================================================
             continue;
         }
-
+    std::cout << "\n" << std::endl;
     } while(isOpen);
 }
 
@@ -287,7 +285,7 @@ void WareHouse:: addVolunteer(Volunteer* Volunteer){
 }
 
 void WareHouse:: cleanUp(){
-        for(Order* ord : pendingOrders){
+    for(Order* ord : pendingOrders){
         delete ord;
     }
 
@@ -333,17 +331,57 @@ void WareHouse:: step(){
             ++ordLoc;
         }
     }
-    //  --2--
+    //  --2 + 3--
     for (Volunteer* vol : volunteers){
         bool checkIfComplete = vol -> isBusy();
         vol -> step();
         if (checkIfComplete != vol->isBusy()){
-
+            auto ordLoc = inProcessOrders.begin();
+            while (ordLoc != inProcessOrders.end()){
+                Order* order = *ordLoc;
+                if (order->getStatus() == OrderStatus::COLLECTING){
+                    pendingOrders.push_back(order);
+                    ordLoc = inProcessOrders.erase(ordLoc);
+                }
+                else if (order->getStatus() == OrderStatus::DELIVERING){
+                    order->setStatus(OrderStatus::COMPLETED);
+                    completedOrders.push_back(order);
+                    ordLoc = inProcessOrders.erase(ordLoc);
+                }
+                else {
+                    ++ordLoc;
+                }
+            }
         }
     }
-
-    // --3--
-
+    // --4--
+    auto voLoc = volunteers.begin();
+    while (voLoc != volunteers.end()){
+        Volunteer* volunteer = *voLoc;
+        if (LimitedCollectorVolunteer* limitedCollector = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)){
+            bool toDelete = limitedCollector -> getNumOrdersLeft() == 0;
+            if(toDelete){
+                voLoc = volunteers.erase(voLoc);
+                delete(limitedCollector);
+            }
+            else {
+                ++voLoc;
+            }
+        }
+        else if (LimitedDriverVolunteer* limitedDriver = dynamic_cast<LimitedDriverVolunteer*>(volunteer)){
+            bool toDelete = limitedDriver -> getNumOrdersLeft() == 0;
+            if(toDelete){
+                voLoc = volunteers.erase(voLoc);
+                delete(limitedDriver);  //watch out for memory leak
+            }
+            else {
+                ++voLoc;
+            }
+        }
+        else {
+            ++voLoc;
+        }
+    }
 }
 
 bool WareHouse:: findCollector(Order& order) const{
@@ -373,7 +411,7 @@ bool WareHouse:: findDriver(Order& order) const{
         if (LimitedDriverVolunteer* limitedDriverVolunteer = dynamic_cast<LimitedDriverVolunteer*>(volunteer)) {
             if (limitedDriverVolunteer->canTakeOrder(order)){
                 limitedDriverVolunteer->acceptOrder(order);
-                order.setCollectorId(limitedDriverVolunteer->getId());
+                order.setDriverId(limitedDriverVolunteer->getId());
                 order.setStatus(OrderStatus::DELIVERING);
                 return true;
             }
@@ -381,7 +419,7 @@ bool WareHouse:: findDriver(Order& order) const{
         else if (DriverVolunteer* driverVolunteer = dynamic_cast<DriverVolunteer*>(volunteer)) {
             if (driverVolunteer->canTakeOrder(order)){
                 driverVolunteer->acceptOrder(order);
-                order.setCollectorId(driverVolunteer->getId());
+                order.setDriverId(driverVolunteer->getId());
                 order.setStatus(OrderStatus::DELIVERING);
                 return true;
             }

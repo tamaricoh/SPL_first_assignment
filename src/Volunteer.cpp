@@ -25,19 +25,19 @@ bool Volunteer::isBusy() const{
     return(activeOrderId != NO_ORDER);
 }
 
-string Volunteer:: type(){
-    return typeStr;
-}
+// string Volunteer:: type(){
+//     return typeStr;
+// }
 
-void Volunteer:: setType(string type){
-    typeStr = type;
-}
+// void Volunteer:: setType(string type){
+//     typeStr = type;
+// }
 
 //-------------------------------------------------------------------------------------------------------------------
 //CollectorVolunteer
 CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
 Volunteer(id, name), coolDown(coolDown), timeLeft(0){
-    setType("CollectorVolunteer");
+    // setType("CollectorVolunteer");
 }
 
 CollectorVolunteer* CollectorVolunteer:: clone() const{
@@ -81,7 +81,7 @@ string CollectorVolunteer::toString() const {
     // Form - <volunteerId> <isBusy> <activeOrderId> <timeLeft>
     string orderId = "None";
     string timeLeft = "None";
-    string isBus = std::to_string(isBusy());
+    string isBus = isBusy()? "True" : "False";
 
     if (isBus == "True") {
         orderId = std::to_string(getActiveOrderId());
@@ -103,7 +103,7 @@ string CollectorVolunteer::toString() const {
 //LimitedCollectorVolunteer
 LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, const string& name, int coolDown ,int maxOrders) :
 CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){
-    setType("LimitedCollectorVolunteer");
+    // setType("LimitedCollectorVolunteer");
 }
 
 LimitedCollectorVolunteer* LimitedCollectorVolunteer:: clone() const {
@@ -136,7 +136,7 @@ string LimitedCollectorVolunteer:: toString() const {
     // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <timeLeft> <coolDown> <ordersLeft> 
     string orderId = "None";
     string timeLeft = "None";
-    string isBus = std::to_string(isBusy());
+    string isBus = isBusy()? "True" : "False";
 
     if (isBus == "True") {
         orderId = std::to_string(getActiveOrderId());
@@ -157,7 +157,7 @@ string LimitedCollectorVolunteer:: toString() const {
 //DriverVolunteer
 DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
 Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){
-    setType("DriverVolunteer");
+    // setType("DriverVolunteer");
 }
 
 DriverVolunteer* DriverVolunteer:: clone() const{
@@ -204,7 +204,7 @@ void DriverVolunteer:: step() {
 string DriverVolunteer:: toString() const {
     string orderId = "None";
     string timeLeft = "None";
-    string isBus = std::to_string(isBusy());
+    string isBus = isBusy()? "True" : "False";
 
     if (isBus == "True") {
         orderId = std::to_string(getActiveOrderId());
@@ -225,7 +225,7 @@ string DriverVolunteer:: toString() const {
 //LimitedDriverVolunteer
 LimitedDriverVolunteer:: LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
 DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){
-    setType("LimitedDriverVolunteer");
+    // setType("LimitedDriverVolunteer");
 }
 
 LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const {
@@ -257,7 +257,7 @@ string LimitedDriverVolunteer:: toString() const {
     // Form - <volunteerId> <isBusy> <activeOrderId> <distanceLeft> <ordersLeft> 
     string orderId = "None";
     string timeLeft = "None";
-    string isBus = std::to_string(isBusy());
+    string isBus = isBusy()? "True" : "False";
 
     if (isBus == "True") {
         orderId = std::to_string(getActiveOrderId());

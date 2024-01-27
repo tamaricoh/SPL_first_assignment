@@ -76,7 +76,6 @@ void AddOrder:: act(WareHouse &wareHouse){
     newOrder->setStatus(OrderStatus::PENDING);
     wareHouse.addOrder(newOrder);
     complete();
-    // wareHouse.addAction(this);
 }
 
 AddOrder* AddOrder:: clone() const{
@@ -85,7 +84,7 @@ AddOrder* AddOrder:: clone() const{
 
 string AddOrder:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "AddOrder " + std::to_string(customerId)+ " ";
+    string output = "order " + std::to_string(customerId)+ " ";
 
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "COMPLETED";
@@ -137,7 +136,7 @@ AddCustomer* AddCustomer:: clone() const{
 
 string AddCustomer:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "AddCustomer " +
+    string output = "customer " +
     customerName + " " + EnumToCustomerType(customerType) + " " +
     std::to_string(distance) + " " +
     std::to_string(maxOrders)+ " ";
@@ -160,6 +159,7 @@ void PrintOrderStatus:: act(WareHouse& wareHouse){
         return;
     }
     std::cout << order.toString() << std::endl;
+    complete();
     wareHouse.addAction(this);
 }
 
@@ -169,7 +169,7 @@ PrintOrderStatus* PrintOrderStatus:: clone() const{
 
 string PrintOrderStatus:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "PrintOrderStatus " + std::to_string(orderId) + " ";
+    string output = "orderStatus " + std::to_string(orderId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "COMPLETED";
@@ -180,10 +180,9 @@ string PrintOrderStatus:: toString() const{
 
 //-------------------------------------------------------------------------------------------------------------------
 // PrintCustomerStatus
-PrintCustomerStatus:: PrintCustomerStatus(int id) : customerId(customerId){}
+PrintCustomerStatus:: PrintCustomerStatus(int id) : customerId(id){}
 
 void PrintCustomerStatus:: act(WareHouse& wareHouse){
-    //===============================================
     Customer& customer = wareHouse.getCustomer(customerId);
     if (customer.getId() == -1){
         error("Customer does not exist");
@@ -199,6 +198,7 @@ void PrintCustomerStatus:: act(WareHouse& wareHouse){
     }
     output += "numOrdersLeft: " + std::to_string(customer.getMaxOrders()-customer.getNumOrders()) +"\n";
     std::cout << output << std::endl;
+    complete();
     wareHouse.addAction(this);
 }
 
@@ -208,7 +208,7 @@ PrintCustomerStatus* PrintCustomerStatus:: clone() const{
 
 string PrintCustomerStatus:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "PrintCustomerStatus " + std::to_string(customerId) + " ";
+    string output = "customerStatus " + std::to_string(customerId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "COMPLETED";
@@ -228,6 +228,7 @@ void PrintVolunteerStatus:: act(WareHouse& wareHouse){
         return;
     }
     std::cout << volunteer.toString() << std::endl;
+    complete();
     wareHouse.addAction(this);
 }
 
@@ -237,7 +238,7 @@ PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{
 
 string PrintVolunteerStatus:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "PrintVolunteerStatus " + std::to_string(volunteerId) + " ";
+    string output = "volunteerStatus " + std::to_string(volunteerId) + " ";
     
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "COMPLETED";
@@ -255,6 +256,7 @@ void PrintActionsLog:: act(WareHouse& wareHouse){
         std::cout << act->toString() << std::endl;
     }
     std::cout << "\n" << std::endl;
+    complete();
     wareHouse.addAction(this);
 
 }
@@ -265,7 +267,7 @@ PrintActionsLog* PrintActionsLog:: clone() const{
 
 string PrintActionsLog:: toString() const{
     // <action_1_name> <action_1_args> <action_1_status>
-    string output = "PrintVolunteerStatus ";
+    string output = "log ";
     
     if (getStatus() == ActionStatus::COMPLETED){
         return output + "COMPLETED";
