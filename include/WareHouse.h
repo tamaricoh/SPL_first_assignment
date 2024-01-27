@@ -32,6 +32,7 @@ class WareHouse {
         void parse (const string &configFilePath);
         void addCustomer(Customer* customer);
         void addVolunteer(Volunteer* Volunteer);
+        void cleanUp();
 
         // rule of 5
         virtual ~WareHouse();
