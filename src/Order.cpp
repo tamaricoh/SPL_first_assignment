@@ -43,14 +43,22 @@ OrderStatus Order :: getStatus() const{
     return status;
 }
 
-const string Order :: toString() const{
-    // Form - <OrderId> <OrderStatus> <CustomerId> <CollectorId> <DriverId>
-    // return std::to_string(id) + " " +
-    //     std::to_string(static_cast<int>(status)) + " " +
-    //     std::to_string(customerId) + " " +
-    //     std::to_string(collectorId) + " " +
-    //     std::to_string(driverId);
+string Order:: EnumToOrderStatus(OrderStatus type) const {
+    if (type == OrderStatus::PENDING) {
+        return "PENDING";
+    } 
+    if (type == OrderStatus::COLLECTING) {
+        return "COLLECTING";
+    }
+    if (type == OrderStatus::DELIVERING) {
+        return "DELIVERING";
+    } 
+    if (type == OrderStatus::COMPLETED) {
+        return "COMPLETED";
+    }
+}
 
+const string Order :: toString() const{
     string driver = "None";
     int driverId = getDriverId();
     if (driverId != -1){
@@ -63,10 +71,9 @@ const string Order :: toString() const{
         collector = std::to_string(collectorId);
     }
 
-
     string output =
         "OrderId: " + std::to_string(id) +"\n"
-        "OrderStatus: " + std::to_string(static_cast<int>(status)) + "\n"
+        "OrderStatus: " + EnumToOrderStatus(status) + "\n"
         "CustomerID: " + std::to_string(customerId) + "\n"
         "Collector: " + collector + "\n"
         "Driver: " + driver + "\n";

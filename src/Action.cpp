@@ -152,23 +152,6 @@ void PrintOrderStatus:: act(WareHouse& wareHouse){
         return;
     }
     cout << order.toString() << endl;
-    // stringstream ss(order.toString());
-    // string word;
-    // vector<string> labels = {
-    //     "OrderId: ",
-    //     "OrderStatus: ",
-    //     "CustomerID: ",
-    //     "Collector: ",
-    //     "Driver: "
-    // };
-
-    // for (string label : labels) {
-    //     ss >> word;
-    //     if (word == "-1"){
-    //         word = "None";
-    //     }
-    //     cout << label << word << endl;
-    // }
 }
 
 PrintOrderStatus* PrintOrderStatus:: clone() const{
@@ -220,29 +203,6 @@ void PrintVolunteerStatus:: act(WareHouse& wareHouse){
         return;
     }
     cout << volunteer.toString() << endl;
-    // stringstream ss(volunteer.toString());
-    // string word;
-    // string helper;
-    
-    // ss >> word;
-    // cout << "VolunteerID: " << word << endl;
-    // ss >> word;
-    // cout << "isBusy: " << word << endl;
-    // helper = word;
-    // ss >> word;
-    // if (helper == "False"){
-    //     word = "None";
-    // }
-    // cout << "Orderid: " << word << endl;
-    // helper = word;
-    // ss >> word;
-    // if (helper == "-1"){
-    //     word = "None";
-    // }
-    // cout << "timeLeft: " << word << endl;
-    // (ss >> word)? cout << "ordersLeft: " << word << endl: cout << "ordersLeft: No Limit" << endl;
-    
-    
 }
 
 PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{

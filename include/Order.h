@@ -27,6 +27,7 @@ class Order {
         int getDriverId() const;
         int getDistance() const;
         OrderStatus getStatus() const;
+        string EnumToOrderStatus(OrderStatus type) const;
         const string toString() const;
 
     private:
