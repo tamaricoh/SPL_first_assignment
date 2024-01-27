@@ -1,7 +1,7 @@
 #include "../include/Volunteer.h"
 
+//-------------------------------------------------------------------------------------------------------------------
 //Volunteer
-
 Volunteer::Volunteer(int id, const string &name) :
 id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
 
@@ -25,9 +25,8 @@ bool Volunteer::isBusy() const{
     return(activeOrderId != completedOrderId);
 }
 
-
+//-------------------------------------------------------------------------------------------------------------------
 //CollectorVolunteer
-
 CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
 Volunteer(id, name), coolDown(coolDown), timeLeft(0){}
 
@@ -36,7 +35,7 @@ CollectorVolunteer* CollectorVolunteer:: clone() const{
 }
 
 void CollectorVolunteer::step() {
-    if (isBusy() && decreaseCoolDown()){
+    if (isBusy() && decreaseCoolDown()){ // if the volunteer has completed the order in this step,
         completedOrderId = activeOrderId;
         activeOrderId = NO_ORDER;
     }
@@ -66,16 +65,9 @@ bool CollectorVolunteer::canTakeOrder(const Order &order) const {
 void CollectorVolunteer::acceptOrder(const Order &order) {
     activeOrderId = order.getId();
     timeLeft = getCoolDown();
-    }
+}
 
 string CollectorVolunteer::toString() const {
-    // Form - <volunteerId> <volunteerName> <isBusy> <activeOrderId> <timeLeft> <coolDown>
-    // return std::to_string(getId()) + " " +
-    //     getName()+ " " +
-    //     std::to_string(isBusy()) + " " +
-    //     std::to_string(getActiveOrderId()) + " " +
-    //     std::to_string(getTimeLeft()) + " " +
-    //     std::to_string(getCoolDown()) + " ";
     // Form - <volunteerId> <isBusy> <activeOrderId> <timeLeft>
     string orderId = "None";
     string timeLeft = "None";
@@ -96,9 +88,8 @@ string CollectorVolunteer::toString() const {
     return output;
 }
 
-
+//-------------------------------------------------------------------------------------------------------------------
 //LimitedCollectorVolunteer
-
 LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, const string& name, int coolDown ,int maxOrders) :
 CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){}
 
@@ -149,9 +140,8 @@ string LimitedCollectorVolunteer:: toString() const {
     return output;
 }
 
-
+//-------------------------------------------------------------------------------------------------------------------
 //DriverVolunteer
-
 DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
 Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){}
 
@@ -172,7 +162,7 @@ int DriverVolunteer:: getDistancePerStep() const{
 } 
 
 bool DriverVolunteer:: decreaseDistanceLeft(){
-    distanceLeft--;
+    distanceLeft -= getDistancePerStep();
     return (distanceLeft <= 0);
 } 
 
@@ -189,7 +179,7 @@ void DriverVolunteer:: acceptOrder(const Order &order) {
     distanceLeft = maxDistance;
 } 
 void DriverVolunteer:: step() {
-    if (isBusy() && decreaseDistanceLeft()){
+    if (isBusy() && decreaseDistanceLeft()){ // if thwe volunteer has completed the order in this step,
         distanceLeft = 0;
         completedOrderId = activeOrderId;
         activeOrderId = NO_ORDER;
@@ -197,12 +187,6 @@ void DriverVolunteer:: step() {
 }
 
 string DriverVolunteer:: toString() const {
-    // Form - <volunteerId> <isBusy> <activeOrderId> <distanceLeft> 
-    // return std::to_string(getId()) + " " +
-    //     std::to_string(isBusy()) + " " +
-    //     std::to_string(getActiveOrderId()) + " " +
-    //     std::to_string(getDistanceLeft()) + " " +
-    //     std::to_string(getMaxDistance()) + " ";
     string orderId = "None";
     string timeLeft = "None";
     string isBus = std::to_string(isBusy());
@@ -222,9 +206,8 @@ string DriverVolunteer:: toString() const {
     return output;
 }
 
-
+//-------------------------------------------------------------------------------------------------------------------
 //LimitedDriverVolunteer
-
 LimitedDriverVolunteer:: LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
 DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){}
 
