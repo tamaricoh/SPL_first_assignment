@@ -578,7 +578,7 @@ WareHouse& WareHouse::operator=(WareHouse&& other) noexcept{
         inProcessOrders = std::move(other.inProcessOrders);
         completedOrders = std::move(other.completedOrders);   
     }
-    return *this
+    return *this;
 }
 
 
