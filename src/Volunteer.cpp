@@ -25,19 +25,19 @@ bool Volunteer::isBusy() const{
     return(activeOrderId != NO_ORDER);
 }
 
-// string Volunteer:: type(){
-//     return typeStr;
-// }
+string Volunteer:: type(){
+    return typeStr;
+}
 
-// void Volunteer:: setType(string type){
-//     typeStr = type;
-// }
+void Volunteer:: setType(string type){
+    typeStr = type;
+}
 
 //-------------------------------------------------------------------------------------------------------------------
 //CollectorVolunteer
 CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
 Volunteer(id, name), coolDown(coolDown), timeLeft(0){
-    // setType("CollectorVolunteer");
+    setType("Collector");
 }
 
 CollectorVolunteer* CollectorVolunteer:: clone() const{
@@ -157,7 +157,7 @@ string LimitedCollectorVolunteer:: toString() const {
 //DriverVolunteer
 DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
 Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){
-    // setType("DriverVolunteer");
+    setType("Driver");
 }
 
 DriverVolunteer* DriverVolunteer:: clone() const{
@@ -186,7 +186,7 @@ bool DriverVolunteer:: hasOrdersLeft() const {
 }
 
 bool DriverVolunteer::canTakeOrder(const Order &order) const {
-    return (!isBusy() & maxDistance <= order.getDistance());
+    return (!isBusy() & maxDistance >= order.getDistance());
 } 
 
 void DriverVolunteer:: acceptOrder(const Order &order) {
@@ -225,7 +225,7 @@ string DriverVolunteer:: toString() const {
 //LimitedDriverVolunteer
 LimitedDriverVolunteer:: LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
 DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){
-    // setType("LimitedDriverVolunteer");
+    // setType("Driver");
 }
 
 LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const {

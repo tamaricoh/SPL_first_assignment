@@ -18,8 +18,8 @@ class Volunteer {
         virtual bool hasOrdersLeft() const = 0; // Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
         virtual bool canTakeOrder(const Order &order) const = 0; // Signal if the volunteer can take the order.      
         virtual void acceptOrder(const Order &order) = 0; // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
-        // string type();
-        // void setType(string type);
+        string type();
+        void setType(string type);
         virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
 
         virtual string toString() const = 0;
@@ -32,7 +32,7 @@ class Volunteer {
     private:
         const int id;
         const string name;
-        // string typeStr;
+        string typeStr;
 
 };
 
