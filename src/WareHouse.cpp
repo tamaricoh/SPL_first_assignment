@@ -330,7 +330,7 @@ void WareHouse:: cleanUp(){
         act = nullptr;
     }
     actionsLog.clear();
-    
+
     delete noCustomer;
     noCustomer = nullptr;
 
@@ -542,7 +542,44 @@ WareHouse& WareHouse:: operator=(const WareHouse &other){
     return *this;
 }
 
+WareHouse:: WareHouse(WareHouse&& other) noexcept: 
+    isOpen(other.isOpen),
+    customerCounter(other.customerCounter),
+    orderCounter(other.orderCounter),
+    volunteerCounter(other.volunteerCounter),
+    noCustomer(other.noCustomer), 
+    noVolunteer(other.noVolunteer), 
+    noOrder(other.noOrder),
+    actionsLog(std::move(other.actionsLog)), 
+    volunteers(std::move(other.volunteers)),
+    customers(std::move(other.customers)),
+    pendingOrders(std::move(other.pendingOrders)),
+    inProcessOrders(std::move(other.inProcessOrders)),
+    completedOrders(std::move(other.completedOrders)) {
+    other.noCustomer = nullptr;
+    other.noVolunteer = nullptr;
+    other.noOrder = nullptr;
+}
 
+WareHouse& WareHouse::operator=(WareHouse&& other) noexcept{
+    if(this != &other){
+        isOpen = other.isOpen;
+        customerCounter = other.customerCounter;
+        orderCounter = other.orderCounter;
+        other.isOpen = false;
+        other.customerCounter = 0;
+        other.orderCounter = 0;
+        other.volunteerCounter = 0;
+        volunteerCounter = other.volunteerCounter;
+        actionsLog = std::move(other.actionsLog); 
+        volunteers = std::move(other.volunteers);
+        customers = std::move(other.customers);
+        pendingOrders = std::move(other.pendingOrders);
+        inProcessOrders = std::move(other.inProcessOrders);
+        completedOrders = std::move(other.completedOrders);   
+    }
+    return *this
+}
 
 
 

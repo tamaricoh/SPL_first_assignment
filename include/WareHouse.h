@@ -45,6 +45,8 @@ class WareHouse {
         virtual ~WareHouse();
         WareHouse(const WareHouse &other);
         WareHouse& operator=(const WareHouse &other);
+        WareHouse(WareHouse&& other) noexcept;
+        WareHouse& operator=(WareHouse&& other) noexcept;
 
     private:
         bool isOpen;
