@@ -32,6 +32,7 @@ class Order {
         int getDistance() const;
         string EnumToOrderStatus(OrderStatus type) const;
         const string closeInfo() const;
+        Order* clone() const;
 
 
     private:

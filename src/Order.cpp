@@ -91,3 +91,7 @@ const string Order :: closeInfo() const{
     return output;
 
 }
+
+Order* Order::clone() const {
+    return new Order(*this);
+}
