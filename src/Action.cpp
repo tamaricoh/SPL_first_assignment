@@ -36,6 +36,7 @@ void SimulateStep :: act(WareHouse &wareHouse){
         wareHouse.step();
         counter++;
     }
+    complete();
 }
 
 SimulateStep* SimulateStep:: clone() const{
