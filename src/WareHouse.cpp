@@ -304,32 +304,33 @@ void WareHouse:: cleanUp(){
         delete ord;
         ord = nullptr;
     }
-
+    pendingOrders.clear();
     for(Order* ord : inProcessOrders){
         delete ord;
         ord = nullptr;
     }
-
+    inProcessOrders.clear();;
     for(Order* ord : completedOrders){
         delete ord;
         ord = nullptr;
     }
-
+    completedOrders.clear();
     for(Customer* cust : customers){
         delete cust;
         cust = nullptr;
     }
-
+    customers.clear();
     for(Volunteer* vol : volunteers){
         delete vol;
         vol = nullptr;
     }
-
+    volunteers.clear();
     for(BaseAction* act : actionsLog){
         delete act;
         act = nullptr;
     }
-
+    actionsLog.clear();
+    
     delete noCustomer;
     noCustomer = nullptr;
 
