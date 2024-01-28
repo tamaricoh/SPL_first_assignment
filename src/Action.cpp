@@ -252,11 +252,10 @@ string PrintVolunteerStatus:: toString() const{
 PrintActionsLog:: PrintActionsLog(){}
 
 void PrintActionsLog:: act(WareHouse& wareHouse){
-    wareHouse.addAction(this);
     for (BaseAction* act : wareHouse.getActions()){
         std::cout << act->toString() << std::endl;
     }
-    std::cout << "\n" << std::endl;
+    wareHouse.addAction(this);
     complete();
 }
 
