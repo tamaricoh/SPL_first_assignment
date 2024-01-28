@@ -22,7 +22,6 @@ void WareHouse :: start(){
     open();
     string input; 
     do {
-        std::cout << "Tamar: start"<< std::endl;
         std::getline(std::cin,input);
         std::stringstream ss(input);
         string firstWord;
@@ -30,7 +29,6 @@ void WareHouse :: start(){
         string nothing;
 
         ss >> firstWord;
-        // iffffffffffff the info is correct to the act====================================================
         if (firstWord == "step") {
             // step <numOfSteps>
             if (ss >> input && !(ss>>nothing) && isNumber(input)){
@@ -101,7 +99,6 @@ void WareHouse :: start(){
 
         if (firstWord == "close") {
             if (!(ss >> input)){
-                std::cout << "Tamar: start closing"<< std::endl;
                 Close* cl = new Close(); // line 103
                 cl -> act(*this);
             }
@@ -121,7 +118,6 @@ void WareHouse :: start(){
             }
             continue;
         }
-    std::cout << "\n" << std::endl;
     } while(isOpen);
 }
 
@@ -158,28 +154,29 @@ Volunteer& WareHouse:: getVolunteer(int volunteerId) const{
 }
 
 Order& WareHouse:: getOrder(int orderId) const{
+    for (const auto& order : completedOrders) {
+        if (order->getId() == orderId) {
+            return *order;
+        }
+    }
+    for (const auto& order : inProcessOrders) {
+        if (order->getId() == orderId) {
+            return *order;
+        }
+    }
     for (const auto& order : pendingOrders) {
         if (order->getId() == orderId) {
             return *order;
         }
     }
 
-    for (const auto& order : inProcessOrders) {
-        if (order->getId() == orderId) {
-            return *order;
-        }
-    }
+    
 
-    for (const auto& order : completedOrders) {
-        if (order->getId() == orderId) {
-            return *order;
-        }
-    }
+    
     return *noOrder;
 }
 
 void WareHouse:: close(){
-    std::cout << "Tamar: close"<< std::endl;
     for (Order* ord : pendingOrders){
         std::cout << ord->closeInfo() << std::endl;
     }
@@ -294,39 +291,32 @@ void WareHouse:: addVolunteer(Volunteer* Volunteer){
 }
 
 void WareHouse:: cleanUp(){
-    std::cout << "Tamar: cleanup "<< std::endl;
     for(Order* ord : pendingOrders){
-        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
         ord = nullptr;
     }
 
     for(Order* ord : inProcessOrders){
-        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
         ord = nullptr;
     }
 
     for(Order* ord : completedOrders){
-        std::cout << "Tamar: ord " << ord->getId() << std::endl;
         delete ord;
         ord = nullptr;
     }
 
     for(Customer* cust : customers){
-        std::cout << "Tamar: cust " << cust->getId() << std::endl;
         delete cust;
         cust = nullptr;
     }
 
     for(Volunteer* vol : volunteers){
-        std::cout << "Tamar: vol " << vol->getId() << std::endl;
         delete vol;
         vol = nullptr;
     }
 
     for(BaseAction* act : actionsLog){
-        std::cout << "Tamar: " << "blah" << std::endl;
         delete act;
         act = nullptr;
     }
@@ -346,36 +336,47 @@ void WareHouse:: step(){
     auto ordLoc = pendingOrders.begin();
     while (ordLoc != pendingOrders.end()){
         Order* order = *ordLoc;
-        if (order->getStatus() == OrderStatus::PENDING && findCollector(*order)){
+        std:: cout << "Tamar: step 1 ---" << order->getId() << " ---------- " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
+        if (order->getStatus() == OrderStatus::PENDING && findCollector(order)){
+            std:: cout << "Tamar: found collector" << std::endl;
             inProcessOrders.push_back(order);
             ordLoc = pendingOrders.erase(ordLoc);
         }
-        else if (order->getStatus() == OrderStatus::COLLECTING && findDriver(*order)){
+        else if (order->getStatus() == OrderStatus::COLLECTING && findDriver(order)){ // && collector finishhhhhhhhhhhh
+            std:: cout << "Tamar: found driver" << std::endl;
+            std:: cout << "Tamar: " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
             inProcessOrders.push_back(order);
             ordLoc = pendingOrders.erase(ordLoc);
         }
         else {
+            std:: cout << "Tamar: found nothing" << std::endl;
             ++ordLoc;
         }
     }
     //  --2 + 3--
     for (Volunteer* vol : volunteers){
+        std:: cout << "Tamar: 2 -3 loop " << vol->getName() << std::endl;
         bool checkIfComplete = vol -> isBusy();
         vol -> step();
         if (checkIfComplete != vol->isBusy()){
+            std:: cout << "Tamar: if vol complete" << std::endl;
             auto ordLoc = inProcessOrders.begin();
             while (ordLoc != inProcessOrders.end()){
                 Order* order = *ordLoc;
-                if (order->getStatus() == OrderStatus::COLLECTING){
+                 std:: cout << "Tamar: itirate inprocess " << order->getId() << " ---------- " << order->EnumToOrderStatus(order->getStatus())<< std::endl;
+                if (vol->getId() == order->getCollectorId() && order->getStatus() == OrderStatus::COLLECTING && finishCollect(order)){
+                    std:: cout << "Tamar: collect" << std::endl;
                     pendingOrders.push_back(order);
                     ordLoc = inProcessOrders.erase(ordLoc);
                 }
-                else if (order->getStatus() == OrderStatus::DELIVERING){
+                else if (vol->getId() == order->getDriverId() && order->getStatus() == OrderStatus::DELIVERING){
+                    std:: cout << "Tamar: deliver" << std::endl;
                     order->setStatus(OrderStatus::COMPLETED);
                     completedOrders.push_back(order);
                     ordLoc = inProcessOrders.erase(ordLoc);
                 }
                 else {
+                    std:: cout << "Tamar: found no" << std::endl;
                     ++ordLoc;
                 }
             }
@@ -411,21 +412,23 @@ void WareHouse:: step(){
     }
 }
 
-bool WareHouse:: findCollector(Order& order) const{
+bool WareHouse:: findCollector(Order* order){
     for(Volunteer* volunteer : volunteers){
         if (LimitedCollectorVolunteer* limitedCollectorVolunteer = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)) {
-            if (limitedCollectorVolunteer->canTakeOrder(order)){
-                limitedCollectorVolunteer->acceptOrder(order);
-                order.setCollectorId(limitedCollectorVolunteer->getId());
-                order.setStatus(OrderStatus::COLLECTING);
+            if (limitedCollectorVolunteer->canTakeOrder(*order)){
+                limitedCollectorVolunteer->acceptOrder(*order);
+                order->setCollectorId(limitedCollectorVolunteer->getId());
+                order->setStatus(OrderStatus::COLLECTING);
+                std:: cout << "Tamar: LCV name " << limitedCollectorVolunteer->getName() << std::endl;
                 return true;
             }
         }
         else if (CollectorVolunteer* collectorVolunteer = dynamic_cast<CollectorVolunteer*>(volunteer)) {
-            if (collectorVolunteer->canTakeOrder(order)){
-                collectorVolunteer->acceptOrder(order);
-                order.setCollectorId(collectorVolunteer->getId());
-                order.setStatus(OrderStatus::COLLECTING);
+            if (collectorVolunteer->canTakeOrder(*order)){
+                collectorVolunteer->acceptOrder(*order);
+                order->setCollectorId(collectorVolunteer->getId());
+                order->setStatus(OrderStatus::COLLECTING);
+                std:: cout << "Tamar: CV name " << collectorVolunteer->getName() << std::endl;
                 return true;
             }
         } 
@@ -433,21 +436,27 @@ bool WareHouse:: findCollector(Order& order) const{
     return false; 
 }
 
-bool WareHouse:: findDriver(Order& order) const{
+bool WareHouse:: findDriver(Order* order){
     for(Volunteer* volunteer : volunteers){
         if (LimitedDriverVolunteer* limitedDriverVolunteer = dynamic_cast<LimitedDriverVolunteer*>(volunteer)) {
-            if (limitedDriverVolunteer->canTakeOrder(order)){
-                limitedDriverVolunteer->acceptOrder(order);
-                order.setDriverId(limitedDriverVolunteer->getId());
-                order.setStatus(OrderStatus::DELIVERING);
+            if (limitedDriverVolunteer->canTakeOrder(*order)){
+                limitedDriverVolunteer->acceptOrder(*order);
+                std:: cout << "Tamar: setDriverId1 " << limitedDriverVolunteer->getId() << std::endl;
+                order->setDriverId(limitedDriverVolunteer->getId());
+                std:: cout << "Tamar: getDriverId " << order-> getDriverId() << std::endl;
+                order->setStatus(OrderStatus::DELIVERING);
+                std:: cout << "Tamar: getStatus " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
+                std:: cout << "Tamar: LDV name " << limitedDriverVolunteer->getName() << std::endl;
                 return true;
             }
         }
         else if (DriverVolunteer* driverVolunteer = dynamic_cast<DriverVolunteer*>(volunteer)) {
-            if (driverVolunteer->canTakeOrder(order)){
-                driverVolunteer->acceptOrder(order);
-                order.setDriverId(driverVolunteer->getId());
-                order.setStatus(OrderStatus::DELIVERING);
+            if (driverVolunteer->canTakeOrder(*order)){
+                driverVolunteer->acceptOrder(*order);
+                std:: cout << "Tamar: setDriverId2" << std::endl;
+                order->setDriverId(driverVolunteer->getId());
+                order->setStatus(OrderStatus::DELIVERING);
+                std:: cout << "Tamar: DV name " << driverVolunteer->getName() << std::endl;
                 return true;
             }
         }
@@ -455,7 +464,7 @@ bool WareHouse:: findDriver(Order& order) const{
     return false;
 }
 
-bool WareHouse:: isNumber(const std::string& str) {
+bool WareHouse:: isNumber(const std::string& str) const {
     for (char ch : str) {
         if (!isdigit(ch)) {
             return false;
@@ -464,11 +473,19 @@ bool WareHouse:: isNumber(const std::string& str) {
     return true;
 }
 
+bool WareHouse:: finishCollect(Order* order) const{
+    int id = order-> getCollectorId();
+    Volunteer& col = getVolunteer(id);
+    if (col.getCompletedOrderId() == order-> getId()){
+        return true;
+    }
+    return false;
+}
+
 
 // rule of 5 ~~~~~~~~~~~~~~~~~~~~~~~~
 WareHouse:: ~WareHouse(){
     // delete all memory from the heap
-    std::cout << "Tamar: ~warehouse"<< std::endl;
     cleanUp();
 }
 

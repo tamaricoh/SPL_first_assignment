@@ -33,9 +33,10 @@ class WareHouse {
         void addVolunteer(Volunteer* Volunteer);
         void cleanUp();
         void step();
-        bool findCollector (Order& order) const;
-        bool findDriver (Order& order) const;
-        bool isNumber(const std::string& str);
+        bool findCollector (Order* order);
+        bool findDriver (Order* order);
+        bool isNumber(const std::string& str) const;
+        bool finishCollect(Order* order) const;
 
         // rule of 5
         virtual ~WareHouse();

@@ -76,7 +76,7 @@ const string Order :: toString() const{
         "OrderStatus: " + EnumToOrderStatus(status) + "\n"
         "CustomerID: " + std::to_string(customerId) + "\n"
         "Collector: " + collector + "\n"
-        "Driver: " + driver + "\n";
+        "Driver: " + driver;
     
     return output;
 }

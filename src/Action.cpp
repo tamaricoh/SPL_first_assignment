@@ -117,6 +117,7 @@ string AddCustomer:: EnumToCustomerType(CustomerType type) const {
 }
 
 void AddCustomer:: act(WareHouse &wareHouse){
+    wareHouse.addAction(this);
     int customerId = wareHouse.getCustomerCount();
     Customer* newCustomer;
     if (customerType == CustomerType::Soldier){
@@ -127,7 +128,6 @@ void AddCustomer:: act(WareHouse &wareHouse){
     }
     wareHouse.addCustomer(newCustomer);
     complete();
-    wareHouse.addAction(this);
 }
 
 AddCustomer* AddCustomer:: clone() const{
@@ -153,6 +153,7 @@ string AddCustomer:: toString() const{
 PrintOrderStatus:: PrintOrderStatus(int id) : orderId(id){}
 
 void PrintOrderStatus:: act(WareHouse& wareHouse){
+    wareHouse.addAction(this);
     Order& order = wareHouse.getOrder(orderId);
     if (order.getId() == -1){
         error("Order does not exist");
@@ -160,7 +161,6 @@ void PrintOrderStatus:: act(WareHouse& wareHouse){
     }
     std::cout << order.toString() << std::endl;
     complete();
-    wareHouse.addAction(this);
 }
 
 PrintOrderStatus* PrintOrderStatus:: clone() const{
@@ -183,6 +183,7 @@ string PrintOrderStatus:: toString() const{
 PrintCustomerStatus:: PrintCustomerStatus(int id) : customerId(id){}
 
 void PrintCustomerStatus:: act(WareHouse& wareHouse){
+    wareHouse.addAction(this);
     Customer& customer = wareHouse.getCustomer(customerId);
     if (customer.getId() == -1){
         error("Customer does not exist");
@@ -196,10 +197,9 @@ void PrintCustomerStatus:: act(WareHouse& wareHouse){
         output += "OrderId: " + std::to_string(ord.getId()) + "\n"
             "OrderStatus: " + ord.EnumToOrderStatus(ord.getStatus()) + "\n";
     }
-    output += "numOrdersLeft: " + std::to_string(customer.getMaxOrders()-customer.getNumOrders()) +"\n";
+    output += "numOrdersLeft: " + std::to_string(customer.getMaxOrders()-customer.getNumOrders());
     std::cout << output << std::endl;
     complete();
-    wareHouse.addAction(this);
 }
 
 PrintCustomerStatus* PrintCustomerStatus:: clone() const{
@@ -222,6 +222,7 @@ string PrintCustomerStatus:: toString() const{
 PrintVolunteerStatus:: PrintVolunteerStatus(int id) : volunteerId(id){}
 
 void PrintVolunteerStatus:: act(WareHouse& wareHouse){
+    wareHouse.addAction(this);
     Volunteer& volunteer = wareHouse.getVolunteer(volunteerId);
     if (volunteer.getId() == -1){
         error("Volunteer does not exist");
@@ -229,7 +230,6 @@ void PrintVolunteerStatus:: act(WareHouse& wareHouse){
     }
     std::cout << volunteer.toString() << std::endl;
     complete();
-    wareHouse.addAction(this);
 }
 
 PrintVolunteerStatus* PrintVolunteerStatus:: clone() const{
@@ -252,13 +252,12 @@ string PrintVolunteerStatus:: toString() const{
 PrintActionsLog:: PrintActionsLog(){}
 
 void PrintActionsLog:: act(WareHouse& wareHouse){
+    wareHouse.addAction(this);
     for (BaseAction* act : wareHouse.getActions()){
         std::cout << act->toString() << std::endl;
     }
     std::cout << "\n" << std::endl;
     complete();
-    wareHouse.addAction(this);
-
 }
 
 PrintActionsLog* PrintActionsLog:: clone() const{
@@ -281,11 +280,8 @@ string PrintActionsLog:: toString() const{
 Close:: Close(){}
 
 void Close:: act(WareHouse& wareHouse){
-    std::cout << "Tamar: act"<< std::endl;
     wareHouse.addAction(this);
     wareHouse.close();
-    // wareHouse.~WareHouse();
-    std::cout << "Tamar: end"<< std::endl;
 }
 
 Close* Close:: clone() const{
