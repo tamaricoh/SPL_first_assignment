@@ -36,6 +36,7 @@ void WareHouse :: start(){
                 SimulateStep* step = new SimulateStep(numOfSteps);
                 step -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -46,6 +47,7 @@ void WareHouse :: start(){
                 AddOrder* addOrder = new AddOrder(id);
                 addOrder -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -59,6 +61,7 @@ void WareHouse :: start(){
                 AddCustomer* addCustomer = new AddCustomer(name, type, stoi(distance), stoi(maxOrder));
                 addCustomer -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -68,6 +71,7 @@ void WareHouse :: start(){
                 PrintOrderStatus* orderStatus = new PrintOrderStatus(stoi(input));
                 orderStatus -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -77,6 +81,7 @@ void WareHouse :: start(){
                 PrintCustomerStatus* customerStatus = new PrintCustomerStatus(stoi(input));
                 customerStatus -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -86,6 +91,7 @@ void WareHouse :: start(){
                 PrintVolunteerStatus* volunteerStatus = new PrintVolunteerStatus(stoi(input));
                 volunteerStatus -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -94,6 +100,7 @@ void WareHouse :: start(){
                 PrintActionsLog* log = new PrintActionsLog();
                 log -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -102,6 +109,7 @@ void WareHouse :: start(){
                 Close* cl = new Close(); // line 103
                 cl -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
@@ -169,10 +177,6 @@ Order& WareHouse:: getOrder(int orderId) const{
             return *order;
         }
     }
-
-    
-
-    
     return *noOrder;
 }
 
@@ -337,12 +341,12 @@ void WareHouse:: step(){
     while (ordLoc != pendingOrders.end()){
         Order* order = *ordLoc;
         std:: cout << "Tamar: step 1 ---" << order->getId() << " ---------- " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
-        if (order->getStatus() == OrderStatus::PENDING && findCollector(order)){
+        if (order->getStatus() == OrderStatus::PENDING && findVol(*order, "Collector")){
             std:: cout << "Tamar: found collector" << std::endl;
             inProcessOrders.push_back(order);
             ordLoc = pendingOrders.erase(ordLoc);
         }
-        else if (order->getStatus() == OrderStatus::COLLECTING && findDriver(order)){ // && collector finishhhhhhhhhhhh
+        else if (order->getStatus() == OrderStatus::COLLECTING && findVol(*order, "Driver")){ 
             std:: cout << "Tamar: found driver" << std::endl;
             std:: cout << "Tamar: " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
             inProcessOrders.push_back(order);
@@ -368,12 +372,15 @@ void WareHouse:: step(){
                     std:: cout << "Tamar: collect" << std::endl;
                     pendingOrders.push_back(order);
                     ordLoc = inProcessOrders.erase(ordLoc);
+                    break;
                 }
                 else if (vol->getId() == order->getDriverId() && order->getStatus() == OrderStatus::DELIVERING){
                     std:: cout << "Tamar: deliver" << std::endl;
                     order->setStatus(OrderStatus::COMPLETED);
+                    std:: cout << "Tamar: comp" << order->getId() << " ---------- " << order->EnumToOrderStatus(order->getStatus())<< std::endl;
                     completedOrders.push_back(order);
                     ordLoc = inProcessOrders.erase(ordLoc);
+                    break;
                 }
                 else {
                     std:: cout << "Tamar: found no" << std::endl;
@@ -386,82 +393,54 @@ void WareHouse:: step(){
     auto voLoc = volunteers.begin();
     while (voLoc != volunteers.end()){
         Volunteer* volunteer = *voLoc;
-        if (LimitedCollectorVolunteer* limitedCollector = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)){
-            bool toDelete = limitedCollector -> getNumOrdersLeft() == 0;
-            if(toDelete){
-                voLoc = volunteers.erase(voLoc);
-                delete(limitedCollector);
+        if (!volunteer->isBusy()){
+            if (LimitedCollectorVolunteer* limitedCollector = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)){
+                bool toDelete = limitedCollector -> getNumOrdersLeft() == 0;
+                if(toDelete){
+                    voLoc = volunteers.erase(voLoc);
+                    delete(limitedCollector);
+                }
+                else {
+                    ++voLoc;
+                }
             }
-            else {
-                ++voLoc;
-            }
-        }
-        else if (LimitedDriverVolunteer* limitedDriver = dynamic_cast<LimitedDriverVolunteer*>(volunteer)){
-            bool toDelete = limitedDriver -> getNumOrdersLeft() == 0;
-            if(toDelete){
-                voLoc = volunteers.erase(voLoc);
-                delete(limitedDriver);  //watch out for memory leak
+            else if (LimitedDriverVolunteer* limitedDriver = dynamic_cast<LimitedDriverVolunteer*>(volunteer)){
+                bool toDelete = limitedDriver -> getNumOrdersLeft() == 0;
+                if(toDelete){
+                    voLoc = volunteers.erase(voLoc);
+                    delete(limitedDriver);  //watch out for memory leak
+                }
+                else {
+                    ++voLoc;
+                }
             }
             else {
                 ++voLoc;
             }
         }
         else {
-            ++voLoc;
-        }
+                ++voLoc;
+            }
     }
 }
 
-bool WareHouse:: findCollector(Order* order){
+bool WareHouse:: findVol(Order& order, string type) const{
     for(Volunteer* volunteer : volunteers){
-        if (LimitedCollectorVolunteer* limitedCollectorVolunteer = dynamic_cast<LimitedCollectorVolunteer*>(volunteer)) {
-            if (limitedCollectorVolunteer->canTakeOrder(*order)){
-                limitedCollectorVolunteer->acceptOrder(*order);
-                order->setCollectorId(limitedCollectorVolunteer->getId());
-                order->setStatus(OrderStatus::COLLECTING);
-                std:: cout << "Tamar: LCV name " << limitedCollectorVolunteer->getName() << std::endl;
+        if (volunteer->type() == type && volunteer -> canTakeOrder(order)) {
+                volunteer->acceptOrder(order);
+                if (type =="Collector"){
+                    order.setStatus(OrderStatus::COLLECTING);
+                    order.setCollectorId(volunteer->getId());
+                     std:: cout << "Tamar: collector name " << volunteer->getName() << std::endl;
+                    return true;
+                }
+                order.setStatus(OrderStatus::DELIVERING);
+                order.setDriverId(volunteer->getId());
+                std:: cout << "Tamar: driver name " << volunteer->getName() << std::endl;
                 return true;
             }
-        }
-        else if (CollectorVolunteer* collectorVolunteer = dynamic_cast<CollectorVolunteer*>(volunteer)) {
-            if (collectorVolunteer->canTakeOrder(*order)){
-                collectorVolunteer->acceptOrder(*order);
-                order->setCollectorId(collectorVolunteer->getId());
-                order->setStatus(OrderStatus::COLLECTING);
-                std:: cout << "Tamar: CV name " << collectorVolunteer->getName() << std::endl;
-                return true;
-            }
-        } 
     }
     return false; 
-}
-
-bool WareHouse:: findDriver(Order* order){
-    for(Volunteer* volunteer : volunteers){
-        if (LimitedDriverVolunteer* limitedDriverVolunteer = dynamic_cast<LimitedDriverVolunteer*>(volunteer)) {
-            if (limitedDriverVolunteer->canTakeOrder(*order)){
-                limitedDriverVolunteer->acceptOrder(*order);
-                std:: cout << "Tamar: setDriverId1 " << limitedDriverVolunteer->getId() << std::endl;
-                order->setDriverId(limitedDriverVolunteer->getId());
-                std:: cout << "Tamar: getDriverId " << order-> getDriverId() << std::endl;
-                order->setStatus(OrderStatus::DELIVERING);
-                std:: cout << "Tamar: getStatus " << order->EnumToOrderStatus(order->getStatus()) << std::endl;
-                std:: cout << "Tamar: LDV name " << limitedDriverVolunteer->getName() << std::endl;
-                return true;
-            }
-        }
-        else if (DriverVolunteer* driverVolunteer = dynamic_cast<DriverVolunteer*>(volunteer)) {
-            if (driverVolunteer->canTakeOrder(*order)){
-                driverVolunteer->acceptOrder(*order);
-                std:: cout << "Tamar: setDriverId2" << std::endl;
-                order->setDriverId(driverVolunteer->getId());
-                order->setStatus(OrderStatus::DELIVERING);
-                std:: cout << "Tamar: DV name " << driverVolunteer->getName() << std::endl;
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 bool WareHouse:: isNumber(const std::string& str) const {
