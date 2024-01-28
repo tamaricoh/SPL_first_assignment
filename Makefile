@@ -24,11 +24,15 @@ proj :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Order.o src/Order.cpp
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
 
-link : 
+link : proj
 	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
 
-run : 
+run : link
 	./bin/main configFileExample.txt
+
+all: link
+	valgrind --leak-check=full --show-reachable=yes ./bin/main configFileExample.txt 
+
 
 tamar : 
 	echo Tamar the queen 
