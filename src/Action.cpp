@@ -1,3 +1,5 @@
+extern WareHouse* backup;
+
 #include "../include/Action.h"
 #include "../include/Order.h"
 #include "../include/Customer.h"
@@ -304,7 +306,11 @@ string Close:: toString() const{
 BackupWareHouse:: BackupWareHouse(){}
 
 void BackupWareHouse:: act(WareHouse& wareHouse){
-    //===============================================
+    if (backup != nullptr) {
+        delete backup;
+        backup = nullptr;
+    }
+    backup = new WareHouse(wareHouse);
     wareHouse.addAction(this);
 }
 
@@ -328,7 +334,11 @@ string BackupWareHouse:: toString() const{
 RestoreWareHouse:: RestoreWareHouse(){}
 
 void RestoreWareHouse:: act(WareHouse& wareHouse){
-    //===============================================
+    if (backup == nullptr | !wareHouse.getBackup()) {
+       error("No backup available");
+    }
+    wareHouse = *backup;
+    complete();
     wareHouse.addAction(this);
 }
 
