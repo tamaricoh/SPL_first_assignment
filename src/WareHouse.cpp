@@ -119,14 +119,16 @@ void WareHouse :: start(){
                 bUp -> act(*this);
                 this->setBackup(true);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
 
         if (firstWord == "restore") {
-            if (!(ss >> input) && this->backupBool == true){
+            if (!(ss >> input)){
                 RestoreWareHouse* res = new RestoreWareHouse();
                 res -> act(*this);
             }
+            std::cout <<"Tamar: _____________________________"<<std::endl;
             continue;
         }
     } while(isOpen);

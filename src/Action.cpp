@@ -1,9 +1,9 @@
-extern WareHouse* backup;
-
 #include "../include/Action.h"
 #include "../include/Order.h"
 #include "../include/Customer.h"
 #include "../include/Volunteer.h"
+
+extern WareHouse* backup;
 
 BaseAction:: BaseAction(){}
 
@@ -336,10 +336,12 @@ RestoreWareHouse:: RestoreWareHouse(){}
 void RestoreWareHouse:: act(WareHouse& wareHouse){
     if (backup == nullptr | !wareHouse.getBackup()) {
        error("No backup available");
+       return;
     }
     wareHouse = *backup;
     complete();
     wareHouse.addAction(this);
+    std::cout << "Tamar" << std::endl;
 }
 
 RestoreWareHouse* RestoreWareHouse:: clone() const{
