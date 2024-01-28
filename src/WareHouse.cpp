@@ -12,7 +12,8 @@
 WareHouse :: WareHouse(const string &configFilePath):
 isOpen(false),
 customerCounter(0), volunteerCounter(0), orderCounter(0), 
-noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0))
+noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)),
+backupBool(false)
 {
     parse(configFilePath);
 }
@@ -105,7 +106,7 @@ void WareHouse :: start(){
 
         if (firstWord == "close") {
             if (!(ss >> input)){
-                Close* cl = new Close(); // line 103
+                Close* cl = new Close();
                 cl -> act(*this);
             }
             std::cout <<"Tamar: _____________________________"<<std::endl;
@@ -114,14 +115,17 @@ void WareHouse :: start(){
 
         if (firstWord == "backup") {
             if (!(ss >> input)){
-                // ==============================================================
+                BackupWareHouse* bUp = new BackupWareHouse();
+                bUp -> act(*this);
+                this->setBackup(true);
             }
             continue;
         }
 
         if (firstWord == "restore") {
-            if (!(ss >> input)){
-                // ==============================================================
+            if (!(ss >> input) && this->backupBool == true){
+                RestoreWareHouse* res = new RestoreWareHouse();
+                res -> act(*this);
             }
             continue;
         }
@@ -460,6 +464,13 @@ bool WareHouse:: finishCollect(Order* order) const{
     return false;
 }
 
+void WareHouse::setBackup(bool restored) {
+    backupBool = restored;
+}
+
+bool WareHouse:: getBackup() const{
+    return backupBool;
+}
 
 // rule of 5 ~~~~~~~~~~~~~~~~~~~~~~~~
 WareHouse:: ~WareHouse(){
@@ -467,8 +478,27 @@ WareHouse:: ~WareHouse(){
     cleanUp();
 }
 
-WareHouse:: WareHouse(const WareHouse &other){
-    //================================================================
+WareHouse:: WareHouse(const WareHouse &other) : 
+    isOpen(other.isOpen), customerCounter(other.customerCounter), orderCounter(other.orderCounter),
+    noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)), backupBool(false){
+        for (Order* ord : other.pendingOrders){
+            pendingOrders.push_back(ord -> clone());
+        }
+        for (Order* ord : other.inProcessOrders){
+            inProcessOrders.push_back(ord -> clone());
+        }
+        for (Order* ord : other.completedOrders){
+            completedOrders.push_back(ord -> clone());
+        }
+        for (Volunteer* vol : other.volunteers){
+            volunteers.push_back(vol -> clone());
+        }
+        for (Customer* cust : other.customers){
+            customers.push_back(cust -> clone());
+        }
+        for (BaseAction* act : other.actionsLog){
+            actionsLog.push_back(act -> clone());
+        }
 }
 
 WareHouse& WareHouse:: operator=(const WareHouse &other){

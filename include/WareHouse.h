@@ -38,6 +38,8 @@ class WareHouse {
         bool findVol(Order& order, string type)const ;
         bool isNumber(const std::string& str) const;
         bool finishCollect(Order* order) const;
+        void setBackup(bool restored);
+        bool getBackup() const;
 
         // rule of 5
         virtual ~WareHouse();
@@ -60,4 +62,5 @@ class WareHouse {
         Customer* noCustomer;
         Volunteer* noVolunteer;
         Order* noOrder;
+        bool backupBool;
 };
