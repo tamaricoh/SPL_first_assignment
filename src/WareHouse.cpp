@@ -11,7 +11,6 @@
 
 WareHouse :: WareHouse(const string &configFilePath):
 isOpen(false),
-actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
 customerCounter(0), volunteerCounter(0), orderCounter(0), 
 noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0))
 {
@@ -473,7 +472,41 @@ WareHouse:: WareHouse(const WareHouse &other){
 }
 
 WareHouse& WareHouse:: operator=(const WareHouse &other){
-    //================================================================
+    if (this != &other) {// not a self-assignment
+        cleanUp();
+
+        // simple types 
+        isOpen = other.isOpen;
+        customerCounter = other.customerCounter;
+        volunteerCounter = other.volunteerCounter;
+        orderCounter = other.orderCounter;
+
+        // object
+        noCustomer = other.noCustomer -> clone();
+        noVolunteer = other.noVolunteer -> clone();
+        noOrder = other.noOrder -> clone();
+
+        for (Order* ord : other.pendingOrders){
+            pendingOrders.push_back(ord -> clone());
+        }
+
+        for (Order* ord : other.inProcessOrders){
+            inProcessOrders.push_back(ord -> clone());
+        }
+        for (Order* ord : other.completedOrders){
+            completedOrders.push_back(ord -> clone());
+        }
+        for (Volunteer* vol : other.volunteers){
+            volunteers.push_back(vol -> clone());
+        }
+        for (Customer* cust : other.customers){
+            customers.push_back(cust -> clone());
+        }
+        for (BaseAction* act : other.actionsLog){
+            actionsLog.push_back(act -> clone());
+        }
+    }
+    return *this;
 }
 
 
