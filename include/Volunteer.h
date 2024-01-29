@@ -20,6 +20,9 @@ class Volunteer {
         virtual void acceptOrder(const Order &order) = 0; // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
         string type();
         void setType(string type);
+        bool getCompleteInCurrentStep() const;
+        bool getReachedMaxOrder() const;
+        void setReachedMaxOrder(bool reachedLimit);
         virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
 
         virtual string toString() const = 0;
@@ -28,6 +31,8 @@ class Volunteer {
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
         int activeOrderId; //Initialized to NO_ORDER if no order is being processed
+        bool completeInCurrentStep;
+        bool reachedMaxOrder;
     
     private:
         const int id;

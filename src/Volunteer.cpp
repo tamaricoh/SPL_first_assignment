@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------------------------------------------------------
 //Volunteer
 Volunteer::Volunteer(int id, const string &name) :
-id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
+id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), completeInCurrentStep(false), reachedMaxOrder(false) {}
 
 int Volunteer::getId() const {
     return id;
@@ -33,6 +33,18 @@ void Volunteer:: setType(string type){
     typeStr = type;
 }
 
+bool Volunteer:: getCompleteInCurrentStep() const{
+    return completeInCurrentStep;
+}
+
+bool Volunteer::getReachedMaxOrder() const{
+    return reachedMaxOrder;
+}
+
+void Volunteer:: setReachedMaxOrder(bool reachedLimit){
+    reachedMaxOrder = reachedLimit;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //CollectorVolunteer
 CollectorVolunteer::CollectorVolunteer(int id, const string& name, int coolDown) :
@@ -45,7 +57,9 @@ CollectorVolunteer* CollectorVolunteer:: clone() const{
 }
 
 void CollectorVolunteer::step() {
+    completeInCurrentStep = false;
     if (isBusy() && decreaseCoolDown()){ // if the volunteer has completed the order in this step,
+        completeInCurrentStep = true;
         completedOrderId = activeOrderId;
         activeOrderId = NO_ORDER;
     }
@@ -120,6 +134,9 @@ bool LimitedCollectorVolunteer:: canTakeOrder(const Order &order) const {
 
 void LimitedCollectorVolunteer:: acceptOrder(const Order &order) {
     ordersLeft--;
+    if (ordersLeft == 0){
+        setReachedMaxOrder(false);
+    }
     CollectorVolunteer::acceptOrder(order);
     
 }
@@ -194,7 +211,9 @@ void DriverVolunteer:: acceptOrder(const Order &order) {
     distanceLeft = maxDistance;
 } 
 void DriverVolunteer:: step() {
+    completeInCurrentStep = false;
     if (isBusy() && decreaseDistanceLeft()){ // if the volunteer has completed the order in this step,
+        completeInCurrentStep = true;
         distanceLeft = 0;
         completedOrderId = activeOrderId;
         activeOrderId = NO_ORDER;
@@ -250,6 +269,9 @@ bool LimitedDriverVolunteer:: canTakeOrder(const Order &order) const {
 
 void LimitedDriverVolunteer:: acceptOrder(const Order &order) {
     ordersLeft--;
+    if (ordersLeft == 0){
+        setReachedMaxOrder(false);
+    }
     DriverVolunteer :: acceptOrder(order);
 }
 
