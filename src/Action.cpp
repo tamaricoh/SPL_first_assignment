@@ -312,6 +312,7 @@ void BackupWareHouse:: act(WareHouse& wareHouse){
     }
     backup = new WareHouse(wareHouse);
     wareHouse.addAction(this);
+    complete();
 }
 
 BackupWareHouse* BackupWareHouse:: clone() const{
@@ -334,13 +335,14 @@ string BackupWareHouse:: toString() const{
 RestoreWareHouse:: RestoreWareHouse(){}
 
 void RestoreWareHouse:: act(WareHouse& wareHouse){
+    // wareHouse.addAction(this);
     if (backup == nullptr | !wareHouse.getBackup()) {
        error("No backup available");
        return;
     }
     wareHouse = *backup;
-    complete();
     wareHouse.addAction(this);
+    complete();
     std::cout << "Tamar: restore" << std::endl;
 }
 

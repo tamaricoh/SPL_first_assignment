@@ -194,6 +194,9 @@ int DriverVolunteer:: getDistancePerStep() const{
 } 
 
 bool DriverVolunteer:: decreaseDistanceLeft(){
+    string test;
+    (distanceLeft <= 0)? test = "true" : test = "false";
+    std::cout << "Tamar: decreaseDistanceLeft " << distanceLeft << " " << getDistancePerStep()<< " " << test << std::endl;
     distanceLeft -= getDistancePerStep();
     return (distanceLeft <= 0);
 } 
@@ -208,7 +211,8 @@ bool DriverVolunteer::canTakeOrder(const Order &order) const {
 
 void DriverVolunteer:: acceptOrder(const Order &order) {
     activeOrderId = order.getId();
-    distanceLeft = maxDistance;
+    // distanceLeft = maxDistance;
+    distanceLeft = order.getDistance();
 } 
 void DriverVolunteer:: step() {
     completeInCurrentStep = false;

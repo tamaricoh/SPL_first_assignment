@@ -282,9 +282,7 @@ void WareHouse :: parse (const string &configFilePath){
             if (type == "limited_driver"){
                 id = volunteerCounter;
                 addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
-            } 
-            std::cout << id << std::endl;
-            
+            }             
         } 
     }
 }
@@ -352,12 +350,14 @@ void WareHouse:: step(){
             passToNextVol(*ord, "Driver");
             pendOrdLoc = pendingOrders.erase(pendOrdLoc);
             --pendOrdLoc;
+            continue;
         }
         if (ord->getStatus() == OrderStatus::PENDING){ // Pass to a Collector
             std:: cout << "Tamar: pass to collector" << std::endl;
             passToNextVol(*ord, "Collector");
             pendOrdLoc = pendingOrders.erase(pendOrdLoc);
             --pendOrdLoc;
+            continue;
         }
     }
     for (auto inProOrdLoc = inProcessOrders.begin(); inProOrdLoc != inProcessOrders.end(); ++inProOrdLoc){
@@ -377,11 +377,15 @@ void WareHouse:: step(){
         int driverId = ord->getDriverId();
         Volunteer* collector = &(getVolunteer(collectorId));
         Volunteer* driver = &(getVolunteer(driverId));
+        string test;
+        driver->getCompleteInCurrentStep()? test = "true" : test = "false";
+        std:: cout << "Tamar: stage 3 - " << ord->EnumToOrderStatus(ord->getStatus()) << " " << test << " " << ord-> getId() << std::endl;
         if (ord->getStatus() == OrderStatus::COLLECTING && collector->getCompleteInCurrentStep() == true){
             std:: cout << "Tamar: complete collect " << ord-> getId() << std::endl;
             pendingOrders.push_back(ord);
             inProOrdLoc = inProcessOrders.erase(inProOrdLoc);
             --inProOrdLoc;
+            continue;
         }
         if (ord->getStatus() == OrderStatus::DELIVERING && driver->getCompleteInCurrentStep() == true){
             std:: cout << "Tamar: completed" << ord-> getId() << std::endl;
@@ -389,6 +393,7 @@ void WareHouse:: step(){
             completedOrders.push_back(ord);
             inProOrdLoc = inProcessOrders.erase(inProOrdLoc);
             --inProOrdLoc;
+            continue;
         }
     }
 

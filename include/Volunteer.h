@@ -5,6 +5,10 @@
 using std::string;
 using std::vector;
 
+
+using namespace std;
+#include <iostream>
+
 #define NO_ORDER -1
 
 class Volunteer {
