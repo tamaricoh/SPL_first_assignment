@@ -1,3 +1,6 @@
+all: link
+	valgrind --leak-check=full --show-reachable=yes ./bin/warehouse configFileExample.txt 
+
 warehouse.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/WareHouse.o src/WareHouse.cpp
 
@@ -16,23 +19,14 @@ order.o :
 action.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
 
-proj :
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/WareHouse.o src/WareHouse.cpp
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/main.o src/main.cpp 
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Customer.o src/Customer.cpp 
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Volunteer.o src/Volunteer.cpp
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Order.o src/Order.cpp
-	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
-
-link : proj
-	g++ -o bin/main bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
+link : action.o order.o volunteer.o customer.o main.o warehouse.o
+	g++ -o bin/warehouse bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
 
 run : link
-	./bin/main configFileExample.txt
+	./bin/warehouse configFileExample.txt
 
-all: link
-	valgrind --leak-check=full --show-reachable=yes ./bin/main configFileExample.txt 
-
+clean : 
+	rm -f bin/*
 
 tamar : 
 	echo Tamar the queen 
