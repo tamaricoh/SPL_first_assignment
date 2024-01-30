@@ -558,7 +558,7 @@ WareHouse:: ~WareHouse(){
 }
 
 WareHouse:: WareHouse(const WareHouse &other) : 
-    isOpen(false),
+    isOpen(other.isOpen),
     actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
     customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter), 
     noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)),
@@ -592,6 +592,7 @@ WareHouse& WareHouse:: operator=(const WareHouse &other){
         customerCounter = other.customerCounter;
         volunteerCounter = other.volunteerCounter;
         orderCounter = other.orderCounter;
+        backupBool = other.backupBool;
 
         // objects
         noCustomer = other.noCustomer -> clone();
@@ -652,7 +653,7 @@ WareHouse& WareHouse::operator=(WareHouse&& other) noexcept{
         noCustomer = other.noCustomer;
         noVolunteer = other.noVolunteer;
         noOrder = other.noOrder;
-        backupBool = false;
+        backupBool = other.backupBool;
 
         other.isOpen = false;
         other.customerCounter = 0;
