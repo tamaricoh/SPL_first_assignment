@@ -33,7 +33,7 @@ class WareHouse {
         void addVolunteer(Volunteer* Volunteer);
         void cleanUp();
         void step();
-        void passToNextVol(Order& order, string type);
+        bool passToNextVol(Order& order, string type);
         bool isNumber(const std::string& str) const;
         void setBackup(bool restored);
         bool getBackup() const;

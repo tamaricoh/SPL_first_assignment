@@ -346,16 +346,15 @@ void WareHouse:: step(){
     // Stage 1
     for (auto pendOrdLoc = pendingOrders.begin(); pendOrdLoc != pendingOrders.end(); ++pendOrdLoc){
         Order* ord = *pendOrdLoc;
-        if (ord->getStatus() == OrderStatus::COLLECTING){ // Pass to a Driver
+        std:: cout << "Tamar: ord id --------- " << ord->getId()<< std::endl;
+        if (ord->getStatus() == OrderStatus::COLLECTING && passToNextVol(*ord, "Driver")){ // Pass to a Driver
             std:: cout << "Tamar: pass to driver" << std::endl;
-            passToNextVol(*ord, "Driver");
             pendOrdLoc = pendingOrders.erase(pendOrdLoc);
             --pendOrdLoc;
             continue;
         }
-        if (ord->getStatus() == OrderStatus::PENDING){ // Pass to a Collector
+        if (ord->getStatus() == OrderStatus::PENDING && passToNextVol(*ord, "Collector")){ // Pass to a Collector
             std:: cout << "Tamar: pass to collector" << std::endl;
-            passToNextVol(*ord, "Collector");
             pendOrdLoc = pendingOrders.erase(pendOrdLoc);
             --pendOrdLoc;
             continue;
@@ -374,6 +373,7 @@ void WareHouse:: step(){
     // Stage 3
     for (auto inProOrdLoc = inProcessOrders.begin(); inProOrdLoc != inProcessOrders.end(); ++inProOrdLoc){
         Order* ord = *inProOrdLoc;
+        std:: cout << "Tamar: ord id --------- " << ord->getId()<< std::endl;
         int collectorId = ord->getCollectorId();
         int driverId = ord->getDriverId();
         Volunteer* collector = &(getVolunteer(collectorId));
@@ -381,17 +381,17 @@ void WareHouse:: step(){
         string test;
         driver->getCompleteInCurrentStep()? test = "true" : test = "false";
         std:: cout << "Tamar: stage 3 - " << ord->EnumToOrderStatus(ord->getStatus()) << " " << test << " " << ord-> getId() << std::endl;
-        if (ord->getStatus() == OrderStatus::COLLECTING && collector->getCompleteInCurrentStep() == true){
-            std:: cout << "Tamar: complete collect " << ord-> getId() << std::endl;
-            pendingOrders.push_back(ord);
-            inProOrdLoc = inProcessOrders.erase(inProOrdLoc);
-            --inProOrdLoc;
-            continue;
-        }
         if (ord->getStatus() == OrderStatus::DELIVERING && driver->getCompleteInCurrentStep() == true){
             std:: cout << "Tamar: completed" << ord-> getId() << std::endl;
             ord->setStatus(OrderStatus::COMPLETED);
             completedOrders.push_back(ord);
+            inProOrdLoc = inProcessOrders.erase(inProOrdLoc);
+            --inProOrdLoc;
+            continue;
+        }
+        if (ord->getStatus() == OrderStatus::COLLECTING && collector->getCompleteInCurrentStep() == true){
+            std:: cout << "Tamar: complete collect " << ord-> getId() << std::endl;
+            pendingOrders.push_back(ord);
             inProOrdLoc = inProcessOrders.erase(inProOrdLoc);
             --inProOrdLoc;
             continue;
@@ -502,7 +502,7 @@ void WareHouse:: step(){
     // }
 }
 
-void WareHouse:: passToNextVol(Order& order, string type){
+bool WareHouse:: passToNextVol(Order& order, string type){
     std:: cout << "Tamar: type " << type << std::endl;
     for(Volunteer* volunteer : volunteers){
         if (volunteer->type() == type && volunteer -> canTakeOrder(order)) {
@@ -512,17 +512,18 @@ void WareHouse:: passToNextVol(Order& order, string type){
                     order.setCollectorId(volunteer->getId());
                     inProcessOrders.push_back(&order);
                     std:: cout << "Tamar: collector name " << volunteer->getName() << std::endl;
-                    break;
+                    return true;
                 }
                 if (type == "Driver"){
                     order.setStatus(OrderStatus::DELIVERING);
                     order.setDriverId(volunteer->getId());
                     inProcessOrders.push_back(&order);
                     std:: cout << "Tamar: driver name " << volunteer->getName() << std::endl;
-                    break;
+                    return true;
                 }
             }
     }
+    return false;
 }
 
 bool WareHouse:: isNumber(const std::string& str) const {
@@ -655,7 +656,6 @@ WareHouse& WareHouse::operator=(WareHouse&& other) noexcept{
         noOrder = other.noOrder;
         backupBool = other.backupBool;
 
-        other.isOpen = false;
         other.customerCounter = 0;
         other.orderCounter = 0;
         other.volunteerCounter = 0;
