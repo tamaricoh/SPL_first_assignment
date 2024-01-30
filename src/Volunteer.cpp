@@ -212,7 +212,6 @@ bool DriverVolunteer::canTakeOrder(const Order &order) const {
 
 void DriverVolunteer:: acceptOrder(const Order &order) {
     activeOrderId = order.getId();
-    // distanceLeft = maxDistance;
     distanceLeft = order.getDistance();
 } 
 void DriverVolunteer:: step() {
