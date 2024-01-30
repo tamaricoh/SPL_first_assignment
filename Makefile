@@ -29,4 +29,4 @@ clean :
 	rm -f bin/*
 
 tamar : 
-	echo Tamar the queen 
+	echo Tamar the greatest 
