@@ -11,6 +11,7 @@
 
 WareHouse :: WareHouse(const string &configFilePath):
 isOpen(false),
+actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
 customerCounter(0), volunteerCounter(0), orderCounter(0), 
 noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)),
 backupBool(false)
@@ -557,8 +558,11 @@ WareHouse:: ~WareHouse(){
 }
 
 WareHouse:: WareHouse(const WareHouse &other) : 
-    isOpen(other.isOpen), customerCounter(other.customerCounter), orderCounter(other.orderCounter),
-    noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)), backupBool(false){
+    isOpen(false),
+    actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(),
+    customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter), 
+    noCustomer(new CivilianCustomer(-1,"",0,0)), noVolunteer(new CollectorVolunteer(-1,"",0)), noOrder(new Order(-1,0,0)),
+    backupBool(false){
         for (Order* ord : other.pendingOrders){
             pendingOrders.push_back(ord -> clone());
         }
@@ -619,18 +623,15 @@ WareHouse& WareHouse:: operator=(const WareHouse &other){
 
 WareHouse:: WareHouse(WareHouse&& other) noexcept: 
     isOpen(other.isOpen),
-    customerCounter(other.customerCounter),
-    orderCounter(other.orderCounter),
-    volunteerCounter(other.volunteerCounter),
-    noCustomer(other.noCustomer), 
-    noVolunteer(other.noVolunteer), 
-    noOrder(other.noOrder),
     actionsLog(std::move(other.actionsLog)), 
     volunteers(std::move(other.volunteers)),
-    customers(std::move(other.customers)),
     pendingOrders(std::move(other.pendingOrders)),
     inProcessOrders(std::move(other.inProcessOrders)),
-    completedOrders(std::move(other.completedOrders)) {
+    completedOrders(std::move(other.completedOrders)),
+    customers(std::move(other.customers)),
+    customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter),
+    noCustomer(other.noCustomer), noVolunteer(other.noVolunteer), noOrder(other.noOrder),
+    backupBool(false){
     other.noCustomer = nullptr;
     other.noVolunteer = nullptr;
     other.noOrder = nullptr;
@@ -639,19 +640,27 @@ WareHouse:: WareHouse(WareHouse&& other) noexcept:
 WareHouse& WareHouse::operator=(WareHouse&& other) noexcept{
     if(this != &other){
         isOpen = other.isOpen;
+        actionsLog = std::move(other.actionsLog); 
+        volunteers = std::move(other.volunteers);
+        pendingOrders = std::move(other.pendingOrders);
+        inProcessOrders = std::move(other.inProcessOrders);
+        completedOrders = std::move(other.completedOrders);  
+        customers = std::move(other.customers);
         customerCounter = other.customerCounter;
+        volunteerCounter = other.volunteerCounter;
         orderCounter = other.orderCounter;
+        noCustomer = other.noCustomer;
+        noVolunteer = other.noVolunteer;
+        noOrder = other.noOrder;
+        backupBool = false;
+
         other.isOpen = false;
         other.customerCounter = 0;
         other.orderCounter = 0;
         other.volunteerCounter = 0;
-        volunteerCounter = other.volunteerCounter;
-        actionsLog = std::move(other.actionsLog); 
-        volunteers = std::move(other.volunteers);
-        customers = std::move(other.customers);
-        pendingOrders = std::move(other.pendingOrders);
-        inProcessOrders = std::move(other.inProcessOrders);
-        completedOrders = std::move(other.completedOrders);   
+        other.noCustomer = nullptr;
+        other.noVolunteer = nullptr;
+        other.noOrder = nullptr;
     }
     return *this;
 }

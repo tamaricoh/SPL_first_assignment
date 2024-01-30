@@ -5,7 +5,7 @@
 
 extern WareHouse* backup;
 
-BaseAction:: BaseAction(){}
+BaseAction:: BaseAction(): errorMsg(""), status(ActionStatus::PENDING){}
 
 ActionStatus BaseAction:: getStatus() const{
     return status;
@@ -104,19 +104,16 @@ customerName(customerName), customerType(CustomerTypeToEnum(customerType)), dist
 CustomerType AddCustomer:: CustomerTypeToEnum(const string& type) const {
     if (type == "Soldier") {
         return CustomerType::Soldier;
-    } 
-    if (type == "Civilian") {
-        return CustomerType::Civilian;
     }
+    return CustomerType::Civilian;
 }
 
 string AddCustomer:: EnumToCustomerType(CustomerType type) const {
     if (type == CustomerType::Soldier) {
         return "Soldier";
-    } 
-    if (type == CustomerType::Civilian) {
-        return "Civilian";
     }
+    return "Civilian";
+
 }
 
 void AddCustomer:: act(WareHouse &wareHouse){
@@ -336,7 +333,7 @@ RestoreWareHouse:: RestoreWareHouse(){}
 
 void RestoreWareHouse:: act(WareHouse& wareHouse){
     // wareHouse.addAction(this);
-    if (backup == nullptr | !wareHouse.getBackup()) {
+    if (backup == nullptr || !wareHouse.getBackup()) {
        error("No backup available");
        return;
     }

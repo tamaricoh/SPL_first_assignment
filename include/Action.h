@@ -9,7 +9,7 @@ using std::vector;
 
 
 enum class ActionStatus{
-    COMPLETED, ERROR
+    PENDING, COMPLETED, ERROR
 };
 
 enum class CustomerType{
@@ -24,6 +24,7 @@ class BaseAction{
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
+        virtual ~BaseAction() = default; // because there are virtual funcs
 
     protected:
         void complete();

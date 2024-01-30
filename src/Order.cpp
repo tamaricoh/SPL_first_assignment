@@ -4,7 +4,7 @@
 using std::string;
 
 Order :: Order(int id, int customerId, int distance) :
-id(id), customerId(customerId), distance(distance), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {
+id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {
 
 }
 
@@ -53,9 +53,7 @@ string Order:: EnumToOrderStatus(OrderStatus type) const {
     if (type == OrderStatus::DELIVERING) {
         return "DELIVERING";
     } 
-    if (type == OrderStatus::COMPLETED) {
-        return "COMPLETED";
-    }
+    return "COMPLETED";
 }
 
 const string Order :: toString() const{

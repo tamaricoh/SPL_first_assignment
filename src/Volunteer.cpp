@@ -3,7 +3,8 @@
 //-------------------------------------------------------------------------------------------------------------------
 //Volunteer
 Volunteer::Volunteer(int id, const string &name) :
-id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), completeInCurrentStep(false), reachedMaxOrder(false) {}
+completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), completeInCurrentStep(false), reachedMaxOrder(false),
+id(id), name(name), typeStr(""){}
 
 int Volunteer::getId() const {
     return id;
@@ -173,7 +174,7 @@ string LimitedCollectorVolunteer:: toString() const {
 //-------------------------------------------------------------------------------------------------------------------
 //DriverVolunteer
 DriverVolunteer:: DriverVolunteer(int id, const string& name, int maxDistance, int distancePerStep) :
-Volunteer(id, name), maxDistance(maxDistance), distanceLeft(maxDistance), distancePerStep(distancePerStep){
+Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep), distanceLeft(maxDistance){
     setType("Driver");
 }
 
@@ -206,7 +207,7 @@ bool DriverVolunteer:: hasOrdersLeft() const {
 }
 
 bool DriverVolunteer::canTakeOrder(const Order &order) const {
-    return (!isBusy() & maxDistance >= order.getDistance());
+    return (!isBusy() && maxDistance >= order.getDistance());
 } 
 
 void DriverVolunteer:: acceptOrder(const Order &order) {
