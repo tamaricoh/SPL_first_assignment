@@ -280,7 +280,7 @@ void WareHouse :: parse (const string &configFilePath){
                 id = volunteerCounter;
                 addVolunteer(new DriverVolunteer(id, name, stoi(dist), stoi(distPerStep)));
             }
-            if (type == "limited_driver" && isNumber(dist) && isNumber(distPerStep) && stoi(orderLimit)){
+            if (type == "limited_driver" && isNumber(dist) && isNumber(distPerStep) && isNumber(orderLimit)){
                 id = volunteerCounter;
                 addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
             }             
