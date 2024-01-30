@@ -33,11 +33,8 @@ class WareHouse {
         void addVolunteer(Volunteer* Volunteer);
         void cleanUp();
         void step();
-        // bool findCollector (Order& order) const;
-        // bool findDriver (Order& order)const ;
         void passToNextVol(Order& order, string type);
         bool isNumber(const std::string& str) const;
-        // bool finishCollect(Order* order) const;
         void setBackup(bool restored);
         bool getBackup() const;
 
