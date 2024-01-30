@@ -21,10 +21,10 @@ backupBool(false)
 
 void WareHouse :: start(){
     open();
-    string input; 
+    string inputLine; 
     do {
-        std::getline(std::cin,input);
-        std::stringstream ss(input);
+        std::getline(std::cin,inputLine);
+        std::stringstream ss(inputLine);
         string firstWord;
         string input;
         string nothing;
