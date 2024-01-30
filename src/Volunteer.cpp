@@ -136,7 +136,7 @@ bool LimitedCollectorVolunteer:: canTakeOrder(const Order &order) const {
 void LimitedCollectorVolunteer:: acceptOrder(const Order &order) {
     ordersLeft--;
     if (ordersLeft == 0){
-        setReachedMaxOrder(false);
+        setReachedMaxOrder(true);
     }
     CollectorVolunteer::acceptOrder(order);
     
@@ -275,7 +275,7 @@ bool LimitedDriverVolunteer:: canTakeOrder(const Order &order) const {
 void LimitedDriverVolunteer:: acceptOrder(const Order &order) {
     ordersLeft--;
     if (ordersLeft == 0){
-        setReachedMaxOrder(false);
+        setReachedMaxOrder(true);
     }
     DriverVolunteer :: acceptOrder(order);
 }

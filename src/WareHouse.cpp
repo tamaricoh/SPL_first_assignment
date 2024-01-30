@@ -247,12 +247,12 @@ void WareHouse :: parse (const string &configFilePath){
             iss >> firstWord >> name >> type >> dist;
 
             // for costumers
-            if (type == "civilian"){
+            if (type == "civilian" && isNumber(dist) && isNumber(orderLimit)){
                 iss >> orderLimit;
                 id = customerCounter;
                 addCustomer(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
             }
-            if (type == "soldier"){
+            if (type == "soldier" && isNumber(dist) && isNumber(orderLimit)){
                 iss >> orderLimit;
                 id = customerCounter;
                 addCustomer(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
@@ -268,19 +268,19 @@ void WareHouse :: parse (const string &configFilePath){
                 orderLimit = temp;
             } 
 
-            if (type == "collector"){
+            if (type == "collector" && isNumber(dist)){
                 id = volunteerCounter;
                 addVolunteer(new CollectorVolunteer(id, name, stoi(dist)));
             }
-            if (type == "limited_collector"){
+            if (type == "limited_collector" && isNumber(dist) && isNumber(orderLimit)){
                 id = volunteerCounter;
                 addVolunteer(new LimitedCollectorVolunteer(id, name, stoi(dist), stoi(orderLimit)));
             }
-            if (type == "driver"){
+            if (type == "driver" && isNumber(dist) && isNumber(distPerStep)){
                 id = volunteerCounter;
                 addVolunteer(new DriverVolunteer(id, name, stoi(dist), stoi(distPerStep)));
             }
-            if (type == "limited_driver"){
+            if (type == "limited_driver" && isNumber(dist) && isNumber(distPerStep) && stoi(orderLimit)){
                 id = volunteerCounter;
                 addVolunteer(new LimitedDriverVolunteer(id, name, stoi(dist), stoi(distPerStep), stoi(orderLimit)));
             }             
