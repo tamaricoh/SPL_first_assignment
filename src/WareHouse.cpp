@@ -250,16 +250,16 @@ void WareHouse :: parse (const string &configFilePath){
             if (type == "civilian" && isNumber(dist)){
                 iss >> orderLimit;
                 id = customerCounter;
-                (isNumber(orderLimit)) ? 
-                addCustomer(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit))):
-                continue;
+                if (isNumber(orderLimit)) {
+                    addCustomer(new CivilianCustomer(id, name, stoi(dist), stoi(orderLimit)));
+                }
             }
             if (type == "soldier" && isNumber(dist) && isNumber(orderLimit)){
                 iss >> orderLimit;
                 id = customerCounter;
-                (isNumber(orderLimit)) ?
-                addCustomer(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
-                continue;
+                if (isNumber(orderLimit)){
+                    addCustomer(new SoldierCustomer(id, name, stoi(dist), stoi(orderLimit)));
+                }
             }
 
             
