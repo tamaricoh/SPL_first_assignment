@@ -1,5 +1,5 @@
 all: link
-	valgrind --leak-check=full --show-reachable=yes ./bin/warehouse configFileExample.txt 
+	valgrind --leak-check=full --show-reachable=yes ./bin/warehouse configFileExample.txt
 
 warehouse.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/WareHouse.o src/WareHouse.cpp
