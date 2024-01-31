@@ -1,4 +1,7 @@
-all: link
+link : action.o order.o volunteer.o customer.o main.o warehouse.o
+	g++ -o bin/warehouse bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
+
+all:
 	valgrind --leak-check=full --show-reachable=yes ./bin/warehouse configFileExample.txt
 
 warehouse.o :
@@ -18,9 +21,6 @@ order.o :
 
 action.o :
 	g++ -g -Wall -Weffc++ -std=c++11 -c -Iinclude -o bin/Action.o src/Action.cpp
-
-link : action.o order.o volunteer.o customer.o main.o warehouse.o
-	g++ -o bin/warehouse bin/WareHouse.o bin/main.o bin/Customer.o bin/Volunteer.o bin/Order.o bin/Action.o
 
 run : link
 	./bin/warehouse configFileExample.txt
