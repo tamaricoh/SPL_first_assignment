@@ -118,7 +118,9 @@ string CollectorVolunteer::toString() const {
 //LimitedCollectorVolunteer
 LimitedCollectorVolunteer:: LimitedCollectorVolunteer(int id, const string& name, int coolDown ,int maxOrders) :
 CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders){
-    // setType("LimitedCollectorVolunteer");
+    if (maxOrders == 0){
+        setReachedMaxOrder(true);
+    }
 }
 
 LimitedCollectorVolunteer* LimitedCollectorVolunteer:: clone() const {
@@ -197,7 +199,6 @@ int DriverVolunteer:: getDistancePerStep() const{
 bool DriverVolunteer:: decreaseDistanceLeft(){
     string test;
     (distanceLeft <= 0)? test = "true" : test = "false";
-    std::cout << "Tamar: decreaseDistanceLeft " << distanceLeft << " " << getDistancePerStep()<< " " << test << std::endl;
     distanceLeft -= getDistancePerStep();
     return (distanceLeft <= 0);
 } 
@@ -248,7 +249,9 @@ string DriverVolunteer:: toString() const {
 //LimitedDriverVolunteer
 LimitedDriverVolunteer:: LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders) :
 DriverVolunteer(id, name, maxDistance, distancePerStep), maxOrders(maxOrders), ordersLeft(maxOrders){
-    // setType("Driver");
+    if (maxOrders == 0){
+        setReachedMaxOrder(true);
+    }
 }
 
 LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const {

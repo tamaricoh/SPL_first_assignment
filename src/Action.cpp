@@ -340,7 +340,6 @@ void RestoreWareHouse:: act(WareHouse& wareHouse){
     wareHouse = *backup;
     wareHouse.addAction(this);
     complete();
-    std::cout << "Tamar: restore" << std::endl;
 }
 
 RestoreWareHouse* RestoreWareHouse:: clone() const{
