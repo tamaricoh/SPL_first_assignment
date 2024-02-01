@@ -384,6 +384,7 @@ void WareHouse:: step(){
     for (auto volLoc = volunteers.begin(); volLoc != volunteers.end(); ++volLoc){
         Volunteer* vol = *volLoc;
         if (!vol->isBusy() && vol->getReachedMaxOrder()){
+            delete vol;
             volLoc = volunteers.erase(volLoc);
             --volLoc;
         }
