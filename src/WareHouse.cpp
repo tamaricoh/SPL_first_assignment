@@ -363,8 +363,6 @@ void WareHouse:: step(){
         int driverId = ord->getDriverId();
         Volunteer* collector = &(getVolunteer(collectorId));
         Volunteer* driver = &(getVolunteer(driverId));
-        string test;
-        driver->getCompleteInCurrentStep()? test = "true" : test = "false";
         if (ord->getStatus() == OrderStatus::DELIVERING && driver->getCompleteInCurrentStep() == true){
             ord->setStatus(OrderStatus::COMPLETED);
             completedOrders.push_back(ord);
